@@ -1,0 +1,19 @@
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	"nasu/src/handler"
+)
+
+func routeCommon(engine *gin.Engine) {
+	engine.POST("/login", handler.HandleLogin)
+}
+
+func routeAuth(engine *gin.RouterGroup) {
+	engine.POST("/changePassword", handler.HandleChangePassword)
+	engine.GET("/overallMetaInfo", handler.HandleOverallMetaInfo)
+	engine.GET("/overallLabelInfo", handler.HandleOverallLabelInfo)
+	engine.GET("/overallTagInfo", handler.HandleOverallTagInfo)
+	engine.POST("/uploadFile", handler.HandleUploadFile)
+	engine.GET("/listFilesByCondition", handler.HandleListFilesByCondition)
+}
