@@ -1,4 +1,4 @@
-package misc
+package context
 
 import (
 	"github.com/sirupsen/logrus"
@@ -14,6 +14,8 @@ type Context struct {
 	XormEngine   *xorm.Engine
 	Logger       *logrus.Logger
 }
+
+var NasuContext = Context{}
 
 var instance *Context
 

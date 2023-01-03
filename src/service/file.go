@@ -3,8 +3,9 @@ package service
 import (
 	"io"
 	"mime/multipart"
+	"nasu/src/context"
 	"nasu/src/db"
-	"nasu/src/misc"
+	"nasu/src/utils"
 	"os"
 	"path/filepath"
 	"sort"
@@ -102,14 +103,14 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	if err != nil {
 		return false, "无法打开上传的文件: " + err.Error()
 	}
-	hash := misc.GetFileMd5(src)
+	hash := utils.GetFileMd5(src)
 	res := db.QueryNasuFileByHash(hash)
 	if res != nil {
 		return false, "重复上传相同的文件"
 	}
 	// TODO: customize hash prefix
-	targetPath := filepath.Join(misc.GetContextInstance().ResourcesDir, hash[:1])
-	if existed, _ := misc.IsPathOrFileExisted(targetPath); !existed {
+	targetPath := filepath.Join(context.NasuContext.ResourcesDir, hash[:1])
+	if existed, _ := utils.IsPathOrFileExisted(targetPath); !existed {
 		_ = os.Mkdir(targetPath, os.ModePerm)
 	}
 	location := filepath.Join(targetPath, filename)
@@ -126,7 +127,7 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	nasuFile.Labels = strings.Join(labels, ",")
 	nasuFile.Tags = strings.Join(tags, ",")
 	nasuFile.Location = location
-	nasuFile.Size = misc.TransformSizeToString(&size)
+	nasuFile.Size = utils.TransformSizeToString(&size)
 	nasuFile.UploadTime = _uploadTime
 	nasuFile.Extension = extension
 	nasuFile.Hash = hash

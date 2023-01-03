@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/misc"
+	"nasu/src/context"
 	"nasu/src/service"
 	"net/http"
 )
@@ -11,7 +11,7 @@ func HandleLogin(c *gin.Context) {
 	password := c.PostForm("password")
 	success, isFirst, token := service.Login(password)
 	if success {
-		misc.GetContextInstance().Password = password
+		context.NasuContext.Password = password
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"success": success,

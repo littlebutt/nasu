@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/misc"
+	"nasu/src/context"
 	"time"
 )
 
 func LogRequired() gin.HandlerFunc {
-	logger := misc.GetContextInstance().Logger
+	logger := context.NasuContext.Logger
 	return func(c *gin.Context) {
 		startTime := time.Now()
 		c.Next()

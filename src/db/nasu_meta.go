@@ -1,7 +1,7 @@
 package db
 
 import (
-	"nasu/src/misc"
+	"nasu/src/context"
 	"time"
 )
 
@@ -19,9 +19,9 @@ func (nasuMeta NasuMeta) TableName() string {
 
 func QueryNasuMetaByType(metaType string) *NasuMeta {
 	var nasuMeta *NasuMeta = &NasuMeta{}
-	res, err := misc.GetContextInstance().XormEngine.Where("meta_type = ?", metaType).Get(nasuMeta)
+	res, err := context.NasuContext.XormEngine.Where("meta_type = ?", metaType).Get(nasuMeta)
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to get nasu_meta, metaType: ", metaType, ", err: ", err.Error())
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to get nasu_meta, metaType: ", metaType, ", err: ", err.Error())
 		return nil
 	}
 	if res {
@@ -33,9 +33,9 @@ func QueryNasuMetaByType(metaType string) *NasuMeta {
 
 func QueryNasuMetasByType(metaType string) []NasuMeta {
 	var nasuMetas []NasuMeta = make([]NasuMeta, 0)
-	err := misc.GetContextInstance().XormEngine.Where("meta_type = ?", metaType).Find(&nasuMetas)
+	err := context.NasuContext.XormEngine.Where("meta_type = ?", metaType).Find(&nasuMetas)
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to query nasu_metas, meta_type: ",
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to query nasu_metas, meta_type: ",
 			metaType, " err: ", err.Error())
 	}
 	return nasuMetas
@@ -45,9 +45,9 @@ func UpdateNasuMetaByType(metaType string, metaValue string) bool {
 	var nasuMeta NasuMeta = NasuMeta{}
 	nasuMeta.MetaType = metaType
 	nasuMeta.MetaValue = metaValue
-	updated, err := misc.GetContextInstance().XormEngine.Update(&nasuMeta, &NasuMeta{MetaType: metaType})
+	updated, err := context.NasuContext.XormEngine.Update(&nasuMeta, &NasuMeta{MetaType: metaType})
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to update nasu_meta, updated: ", updated,
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to update nasu_meta, updated: ", updated,
 			", err: ", err.Error(), ", metaType: ", metaType)
 		return false
 	}
@@ -55,9 +55,9 @@ func UpdateNasuMetaByType(metaType string, metaValue string) bool {
 }
 
 func InsertNasuMeta(nasuMeta NasuMeta) bool {
-	_, err := misc.GetContextInstance().XormEngine.Insert(&nasuMeta)
+	_, err := context.NasuContext.XormEngine.Insert(&nasuMeta)
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to insert nasu_meta, err: ", err.Error())
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to insert nasu_meta, err: ", err.Error())
 		return false
 	}
 	return true

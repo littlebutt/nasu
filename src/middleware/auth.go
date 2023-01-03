@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/misc"
+	"nasu/src/context"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,7 +10,8 @@ import (
 )
 
 func AuthRequired() gin.HandlerFunc {
-	password := misc.GetContextInstance().Password
+	// FIXME: password cannot work here!
+	password := context.NasuContext.Password
 	return func(c *gin.Context) {
 		authorization := c.Request.Header.Get("Authorization")
 		res := strings.Split(authorization, "+")

@@ -1,7 +1,7 @@
 package db
 
 import (
-	"nasu/src/misc"
+	"nasu/src/context"
 	"strings"
 	"time"
 )
@@ -25,9 +25,9 @@ func (nasuFile NasuFile) TableName() string {
 }
 
 func InsertNasuFile(nasuFile NasuFile) bool {
-	inserted, err := misc.GetContextInstance().XormEngine.Insert(&nasuFile)
+	inserted, err := context.NasuContext.XormEngine.Insert(&nasuFile)
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to insert nasu_file, nasu_file:",
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to insert nasu_file, nasu_file:",
 			nasuFile, " err: ", err.Error())
 		return false
 	}
@@ -36,9 +36,9 @@ func InsertNasuFile(nasuFile NasuFile) bool {
 
 func QueryNasuFileByHash(hash string) *NasuFile {
 	var nasuFile NasuFile = NasuFile{}
-	res, err := misc.GetContextInstance().XormEngine.Where("hash = ?", hash).Get(&nasuFile)
+	res, err := context.NasuContext.XormEngine.Where("hash = ?", hash).Get(&nasuFile)
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to query nasu_file by hash, hash: ", hash,
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to query nasu_file by hash, hash: ", hash,
 			" err: ", err.Error())
 		return nil
 	}
@@ -51,9 +51,9 @@ func QueryNasuFileByHash(hash string) *NasuFile {
 
 func QueryNasuFiles() []NasuFile {
 	var nasuFiles []NasuFile = make([]NasuFile, 0)
-	err := misc.GetContextInstance().XormEngine.Find(&nasuFiles)
+	err := context.NasuContext.XormEngine.Find(&nasuFiles)
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to query all nasu_file, err: ", err.Error())
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to query all nasu_file, err: ", err.Error())
 	}
 	return nasuFiles
 }
@@ -61,7 +61,7 @@ func QueryNasuFiles() []NasuFile {
 func QueryNasuFilesByCondition(filename string, extension string, labels []string, tags []string,
 	startTime string, endTime string, pageSize int, pageNum int) []NasuFile {
 	nasuFiles := make([]NasuFile, 0)
-	var session = misc.GetContextInstance().XormEngine.Where("1 = 1")
+	var session = context.NasuContext.XormEngine.Where("1 = 1")
 	if filename != "" {
 		session = session.And("filename like ?", "%"+filename+"%")
 	}
@@ -86,7 +86,7 @@ func QueryNasuFilesByCondition(filename string, extension string, labels []strin
 	}
 	err := session.Limit(pageSize, pageSize*(pageNum-1)).Find(&nasuFiles)
 	if err != nil {
-		misc.GetContextInstance().Logger.Warn("[Nasu-db] Fail to query nasu_file by condition, filename: ", filename,
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to query nasu_file by condition, filename: ", filename,
 			" extension: ", extension, " labels: ", strings.Join(labels, ","), " tags: ", strings.Join(tags, ","),
 			" startTime: ", startTime, " endTime: ", endTime, " err: ", err.Error())
 	}
