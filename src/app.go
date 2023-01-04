@@ -66,7 +66,7 @@ func InitDB() {
 		MetaValue: service.DEFAULT_PASSWORD, // md5 for "admin"
 	}
 	db.InsertNasuMetaIfNotExistedByMetaType(&nasuMeta)
-	context.NasuContext.Password = nasuMeta.MetaValue
+	context.NasuContext.Password = db.QueryNasuMetaByType("PASSWORD").MetaValue
 	context.NasuContext.Logger.Info("[Nasu-init] Db has been inited!")
 }
 

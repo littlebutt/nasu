@@ -10,8 +10,7 @@ import (
 )
 
 func AuthRequired() gin.HandlerFunc {
-	// FIXME: password cannot work here!
-	password := context.NasuContext.Password
+	// FIXME:
 	return func(c *gin.Context) {
 		authorization := c.Request.Header.Get("Authorization")
 		res := strings.Split(authorization, "+")
@@ -25,6 +24,7 @@ func AuthRequired() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
+		password := context.NasuContext.Password
 		// redirect if timeout (3 * 60 * 60 s)
 		// TODO: customize this value
 		if targetPassword != password || (time.Now().Unix()-int64(targetTimestamp) > 3*60*60) {

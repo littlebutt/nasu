@@ -1,6 +1,7 @@
 package service
 
 import (
+	"nasu/src/context"
 	"nasu/src/db"
 	"strconv"
 	"time"
@@ -30,7 +31,13 @@ func ChangePassword(oldPassword string, newPassword string) (success bool) {
 		passwordFromDb = nasuMeta.MetaValue
 	}
 	if passwordFromDb == oldPassword {
-		return db.UpdateNasuMetaByType("PASSWORD", newPassword)
+		res := db.UpdateNasuMetaByType("PASSWORD", newPassword)
+		if res {
+			context.NasuContext.Password = newPassword
+			return true
+		} else {
+			return false
+		}
 	} else {
 		return false
 	}
