@@ -9,16 +9,16 @@ import (
 	"strconv"
 )
 
-func IsPathOrFileExisted(path string) (bool, error) {
+func IsPathOrFileExisted(path string) bool {
 	_, err := os.Stat(path)
 	if err == nil {
-		return true, nil
+		return true
 	} else {
 		if os.IsNotExist(err) {
-			return false, nil
+			return false
 		}
 	}
-	return false, err
+	return false
 }
 
 func GetFileMd5(file multipart.File) string {

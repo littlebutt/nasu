@@ -110,7 +110,7 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	}
 	// TODO: customize hash prefix
 	targetPath := filepath.Join(context.NasuContext.ResourcesDir, hash[:1])
-	if existed, _ := utils.IsPathOrFileExisted(targetPath); !existed {
+	if existed := utils.IsPathOrFileExisted(targetPath); !existed {
 		_ = os.Mkdir(targetPath, os.ModePerm)
 	}
 	location := filepath.Join(targetPath, filename)

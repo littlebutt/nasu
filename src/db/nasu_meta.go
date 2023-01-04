@@ -17,6 +17,22 @@ func (nasuMeta NasuMeta) TableName() string {
 	return "nasu_meta"
 }
 
+func InsertNasuMetaIfNotExistedByMetaType(nasuMeta *NasuMeta) bool {
+	exist, err := context.NasuContext.XormEngine.Exist(&NasuMeta{
+		MetaType: nasuMeta.MetaType,
+	})
+	if err != nil {
+		return false
+	}
+	if !exist {
+		_, err := context.NasuContext.XormEngine.Insert(nasuMeta)
+		if err != nil {
+			return false
+		}
+	}
+	return true
+}
+
 func QueryNasuMetaByType(metaType string) *NasuMeta {
 	var nasuMeta *NasuMeta = &NasuMeta{}
 	res, err := context.NasuContext.XormEngine.Where("meta_type = ?", metaType).Get(nasuMeta)
