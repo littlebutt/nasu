@@ -92,3 +92,25 @@ func QueryNasuFilesByCondition(filename string, extension string, labels []strin
 	}
 	return nasuFiles
 }
+
+func QueryNasuFileById(id int64) *NasuFile {
+	var nasuFile NasuFile = NasuFile{}
+	res, err := context.NasuContext.XormEngine.Where("id = ?", id).Get(&nasuFile)
+	if err != nil {
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to find target nasu_file, id: ", id, " err: ", err.Error())
+	}
+	if res {
+		return &nasuFile
+	} else {
+		return nil
+	}
+}
+
+func UpdateNasuFile(nasuFile *NasuFile) bool {
+	_, err := context.NasuContext.XormEngine.Update(nasuFile, &NasuFile{Id: nasuFile.Id})
+	if err != nil {
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to update nasu_file, nasu_file: ", nasuFile, " err: ", err.Error())
+		return false
+	}
+	return true
+}

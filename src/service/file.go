@@ -13,39 +13,15 @@ import (
 	"time"
 )
 
-func OverallMetaInfo() (resultMap map[string]any) {
-	resultMap = make(map[string]any)
+func OverallFileInfo() (resultSlice []string) {
+	resultSlice = make([]string, 0)
 	nasuMetas := db.QueryNasuMetasByType("FILENAME")
 	sort.SliceStable(nasuMetas, func(i, j int) bool {
 		return (nasuMetas)[i].GmtModified.Unix() > (nasuMetas)[j].GmtModified.Unix()
 	})
-	filenames := make([]string, 0)
 	for _, nasuMeta := range nasuMetas {
-		filenames = append(filenames, nasuMeta.MetaValue)
+		resultSlice = append(resultSlice, nasuMeta.MetaValue)
 	}
-	resultMap["filenames"] = filenames
-
-	nasuMetas = db.QueryNasuMetasByType("LABEL")
-	labels := make([]string, 0)
-	for _, nasuMeta := range nasuMetas {
-		labels = append(labels, nasuMeta.MetaValue)
-	}
-	resultMap["labels"] = labels
-
-	nasuMetas = db.QueryNasuMetasByType("TAG")
-	tags := make([]string, 0)
-	for _, nasuMeta := range nasuMetas {
-		tags = append(tags, nasuMeta.MetaValue)
-	}
-	resultMap["tags"] = tags
-
-	nasuMetas = db.QueryNasuMetasByType("EXTENSION")
-	extensions := make([]string, 0)
-	for _, nasuMeta := range nasuMetas {
-		extensions = append(extensions, nasuMeta.MetaValue)
-	}
-	resultMap["extension"] = extensions
-
 	return
 }
 
@@ -76,6 +52,19 @@ func OverallTagInfo() (resultMap map[string]int) {
 			} else {
 				resultMap[tag] = 1
 			}
+		}
+	}
+	return
+}
+
+func OverallExtensionInfo() (resultMap map[string]int) {
+	resultMap = make(map[string]int)
+	nasuFiles := db.QueryNasuFiles()
+	for _, nasuFile := range nasuFiles {
+		if _, ok := resultMap[nasuFile.Extension]; ok {
+			resultMap[nasuFile.Extension] += 1
+		} else {
+			resultMap[nasuFile.Extension] = 1
 		}
 	}
 	return
@@ -136,23 +125,10 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	}
 
 	// update db nasu_meta
-	for _, label := range labels {
-		var nasuMeta = db.NasuMeta{MetaType: "LABEL", MetaValue: label}
-		db.InsertNasuMeta(nasuMeta)
-	}
-
-	for _, tag := range tags {
-		var nasuMeta = db.NasuMeta{MetaType: "TAG", MetaValue: tag}
-		db.InsertNasuMeta(nasuMeta)
-	}
-
 	var nasuMetaFilename = db.NasuMeta{MetaType: "FILENAME", MetaValue: filename}
-	db.InsertNasuMeta(nasuMetaFilename)
+	db.InsertNasuMeta(&nasuMetaFilename)
 
-	var nasuMetaExtension = db.NasuMeta{MetaType: "EXTENSION", MetaValue: extension}
-	db.InsertNasuMeta(nasuMetaExtension)
 	return true, ""
-
 }
 
 // test script : curl localhost:8080/api/uploadFile -X POST -H "Authorization:21232f297a57a5a743894a0e4a801fc3+1672619245" -F "file=@2022-10-12.log" -F "filename=2022-10-12.log" -F "labels=foo:bar" -F "tags=0" -F "uploadTime=2022-12-30 08:00:00"
@@ -164,4 +140,42 @@ func ListFilesByCondition(filename string, extension string, labels []string, ta
 	resultMap["nasuFiles"] = nasuFiles
 	resultMap["total"] = len(nasuFiles)
 	return resultMap
+}
+
+func ModifyFile(nasuFile db.NasuFile) bool {
+	// pre-check
+	if nasuFile.Id == 0 {
+		return false
+	}
+	oldNasuFile := db.QueryNasuFileById(nasuFile.Id)
+	if oldNasuFile == nil {
+		return false
+	}
+	// update nasu_file
+	extension := ""
+	if strs := strings.Split(nasuFile.Filename, "."); len(strs) == 2 {
+		extension = strs[1]
+	}
+	updatedNasuFile := db.NasuFile{
+		Id:        nasuFile.Id,
+		Filename:  nasuFile.Filename,
+		Labels:    nasuFile.Labels,
+		Tags:      nasuFile.Tags,
+		Extension: extension,
+	}
+	res := db.UpdateNasuFile(&updatedNasuFile)
+	if !res {
+		return false
+	}
+
+	// update nasu_meta
+	res = true
+	if nasuFile.Filename != "" {
+		res = res && db.DeleteNasuMetaByMetaTypeAndMetaValue("FILENAME", oldNasuFile.Filename)
+		res = res && db.InsertNasuMeta(&db.NasuMeta{
+			MetaType:  "FILENAME",
+			MetaValue: nasuFile.Filename,
+		})
+	}
+	return res
 }

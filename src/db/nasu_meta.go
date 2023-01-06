@@ -70,10 +70,20 @@ func UpdateNasuMetaByType(metaType string, metaValue string) bool {
 	return true
 }
 
-func InsertNasuMeta(nasuMeta NasuMeta) bool {
-	_, err := context.NasuContext.XormEngine.Insert(&nasuMeta)
+func InsertNasuMeta(nasuMeta *NasuMeta) bool {
+	_, err := context.NasuContext.XormEngine.Insert(nasuMeta)
 	if err != nil {
 		context.NasuContext.Logger.Warn("[Nasu-db] Fail to insert nasu_meta, err: ", err.Error())
+		return false
+	}
+	return true
+}
+
+func DeleteNasuMetaByMetaTypeAndMetaValue(metaType string, metaValue string) bool {
+	_, err := context.NasuContext.XormEngine.Where("meta_type = ?", metaType).
+		And("meta_value = ?", metaValue).Delete(&NasuMeta{})
+	if err != nil {
+		context.NasuContext.Logger.Warn("[Nasu-db] Fail to delete nasu_meta, err: ", err.Error())
 		return false
 	}
 	return true

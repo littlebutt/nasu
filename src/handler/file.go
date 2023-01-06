@@ -2,15 +2,18 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"nasu/src/db"
 	"nasu/src/service"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
-func HandleOverallMetaInfo(c *gin.Context) {
-	resultMap := service.OverallMetaInfo()
-	c.JSON(http.StatusOK, resultMap)
+func HandleOverallFileInfo(c *gin.Context) {
+	resultSlice := service.OverallFileInfo()
+	c.JSON(http.StatusOK, gin.H{
+		"filename": resultSlice,
+	})
 }
 
 func HandleOverallLabelInfo(c *gin.Context) {
@@ -20,6 +23,11 @@ func HandleOverallLabelInfo(c *gin.Context) {
 
 func HandleOverallTagInfo(c *gin.Context) {
 	resultMap := service.OverallTagInfo()
+	c.JSON(http.StatusOK, resultMap)
+}
+
+func HandleOverallExtensionInfo(c *gin.Context) {
+	resultMap := service.OverallExtensionInfo()
 	c.JSON(http.StatusOK, resultMap)
 }
 
@@ -66,4 +74,25 @@ func HandleListFilesByCondition(c *gin.Context) {
 
 	resultMap := service.ListFilesByCondition(filename, extension, labels, tags, startTime, endTime, pageSize, pageNum)
 	c.JSON(http.StatusOK, resultMap)
+}
+
+func HandleModifyFile(c *gin.Context) {
+	id, err := strconv.Atoi(c.PostForm("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"reason": "id字段不正确",
+		})
+	}
+	filename := c.PostForm("filename")
+	labels := strings.Replace(c.PostForm("labels"), ":", ",", -1)
+	tags := strings.Replace(c.PostForm("tags"), ":", ",", -1)
+	res := service.ModifyFile(db.NasuFile{
+		Id:       int64(id),
+		Filename: filename,
+		Labels:   labels,
+		Tags:     tags,
+	})
+	c.JSON(http.StatusOK, gin.H{
+		"success": res,
+	})
 }
