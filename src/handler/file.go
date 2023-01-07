@@ -96,3 +96,11 @@ func HandleModifyFile(c *gin.Context) {
 		"success": res,
 	})
 }
+
+func HandleDeleteFile(c *gin.Context) {
+	filename := c.PostForm("filename")
+	res := service.DeleteFile(filename)
+	c.JSON(http.StatusOK, gin.H{
+		"success": res,
+	})
+}

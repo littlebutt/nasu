@@ -14,6 +14,7 @@ type NasuFileStore interface {
 		startTime string, endTime string, pageSize int, pageNum int) []NasuFile
 	QueryNasuFileById(id int64) *NasuFile
 	UpdateNasuFile(nasuFile *NasuFile) bool
+	DeleteNasuFileByFilename(filename string) bool
 }
 
 var NasuFileRepo NasuFileStore
@@ -112,6 +113,15 @@ func (db *nasuFileRepo) UpdateNasuFile(nasuFile *NasuFile) bool {
 	_, err := db.x.Update(nasuFile, &NasuFile{Id: nasuFile.Id})
 	if err != nil {
 		log.Log.Warn("[Nasu-db] Fail to update nasu_file, nasu_file: %s, err: %s", nasuFile, err.Error())
+		return false
+	}
+	return true
+}
+
+func (db *nasuFileRepo) DeleteNasuFileByFilename(filename string) bool {
+	_, err := db.x.Where("filename = ?", filename).Delete(&NasuFile{})
+	if err != nil {
+		log.Log.Warn("[Nasu-db] Fail to delete nasu_file, filename: %d, err: %s", filename, err.Error())
 		return false
 	}
 	return true

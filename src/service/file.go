@@ -5,6 +5,7 @@ import (
 	"mime/multipart"
 	"nasu/src/context"
 	"nasu/src/db"
+	"nasu/src/log"
 	"nasu/src/utils"
 	"os"
 	"path/filepath"
@@ -177,5 +178,34 @@ func ModifyFile(nasuFile db.NasuFile) bool {
 			MetaValue: nasuFile.Filename,
 		})
 	}
+	return res
+}
+
+func DeleteFile(filename string) bool {
+	// pre-check
+	if filename == "" {
+		return false
+	}
+	// delete file
+	nasuFiles := db.NasuFileRepo.QueryNasuFilesByCondition(filename, "", []string{}, []string{},
+		"", "", 10, 1)
+	if len(nasuFiles) == 0 {
+		return false
+	}
+	location := nasuFiles[0].Location
+	err := os.Remove(location)
+	if err != nil {
+		log.Log.Error("[Nasu-service] Fail to remove file, filename: %s, err: %s", filename, err.Error())
+		return false
+	}
+
+	// delete nasu_file
+	res := db.NasuFileRepo.DeleteNasuFileByFilename(filename)
+	if !res {
+		return false
+	}
+
+	//delete nasu_file
+	res = db.NasuMetaRepo.DeleteNasuMetaByMetaTypeAndMetaValue("FILENAME", filename)
 	return res
 }
