@@ -11,7 +11,7 @@ const DEFAULT_PASSWORD = "21232f297a57a5a743894a0e4a801fc3"
 
 func Login(password string) (success bool, isFirst bool, token string) {
 	var passwordFromDb string
-	if nasuMeta := db.QueryNasuMetaByType("PASSWORD"); nasuMeta != nil {
+	if nasuMeta := db.NasuMetaRepo.QueryNasuMetaByType("PASSWORD"); nasuMeta != nil {
 		passwordFromDb = nasuMeta.MetaValue
 	}
 	if passwordFromDb == password {
@@ -27,11 +27,11 @@ func Login(password string) (success bool, isFirst bool, token string) {
 
 func ChangePassword(oldPassword string, newPassword string) (success bool) {
 	var passwordFromDb string
-	if nasuMeta := db.QueryNasuMetaByType("PASSWORD"); nasuMeta != nil {
+	if nasuMeta := db.NasuMetaRepo.QueryNasuMetaByType("PASSWORD"); nasuMeta != nil {
 		passwordFromDb = nasuMeta.MetaValue
 	}
 	if passwordFromDb == oldPassword {
-		res := db.UpdateNasuMetaByType("PASSWORD", newPassword)
+		res := db.NasuMetaRepo.UpdateNasuMetaByType("PASSWORD", newPassword)
 		if res {
 			context.NasuContext.Password = newPassword
 			return true

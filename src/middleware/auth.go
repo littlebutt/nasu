@@ -10,7 +10,6 @@ import (
 )
 
 func AuthRequired() gin.HandlerFunc {
-	// FIXME:
 	return func(c *gin.Context) {
 		authorization := c.Request.Header.Get("Authorization")
 		res := strings.Split(authorization, "+")

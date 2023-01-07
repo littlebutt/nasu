@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/context"
+	"nasu/src/log"
 	"time"
 )
 
 func LogRequired() gin.HandlerFunc {
-	logger := context.NasuContext.Logger
+	logger := log.Log.GetLogger()
 	return func(c *gin.Context) {
 		startTime := time.Now()
 		c.Next()
@@ -17,12 +17,17 @@ func LogRequired() gin.HandlerFunc {
 		reqUrl := c.Request.URL
 		statusCode := c.Writer.Status()
 		clientIP := c.ClientIP()
-		logger.Infof("| %3d | %13v | %15s | %s | %s",
+		params := ""
+		if reqMethod == "POST" {
+			params = c.Request.PostForm.Encode()
+		}
+		logger.Infof("[Nasu-handler]| %3d | %5v | %15s | %s | %s| %+v",
 			statusCode,
 			latencyTime,
 			clientIP,
 			reqMethod,
 			reqUrl,
+			params,
 		)
 	}
 }

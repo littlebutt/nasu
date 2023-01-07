@@ -15,7 +15,7 @@ import (
 
 func OverallFileInfo() (resultSlice []string) {
 	resultSlice = make([]string, 0)
-	nasuMetas := db.QueryNasuMetasByType("FILENAME")
+	nasuMetas := db.NasuMetaRepo.QueryNasuMetasByType("FILENAME")
 	sort.SliceStable(nasuMetas, func(i, j int) bool {
 		return (nasuMetas)[i].GmtModified.Unix() > (nasuMetas)[j].GmtModified.Unix()
 	})
@@ -27,7 +27,7 @@ func OverallFileInfo() (resultSlice []string) {
 
 func OverallLabelInfo() (resultMap map[string]int) {
 	resultMap = make(map[string]int)
-	nasuFiles := db.QueryNasuFiles()
+	nasuFiles := db.NasuFileRepo.QueryNasuFiles()
 	for _, nasuFile := range nasuFiles {
 		labels := strings.Split(nasuFile.Labels, ",")
 		for _, label := range labels {
@@ -43,7 +43,7 @@ func OverallLabelInfo() (resultMap map[string]int) {
 
 func OverallTagInfo() (resultMap map[string]int) {
 	resultMap = make(map[string]int)
-	nasuFiles := db.QueryNasuFiles()
+	nasuFiles := db.NasuFileRepo.QueryNasuFiles()
 	for _, nasuFile := range nasuFiles {
 		tags := strings.Split(nasuFile.Tags, ",")
 		for _, tag := range tags {
@@ -59,7 +59,7 @@ func OverallTagInfo() (resultMap map[string]int) {
 
 func OverallExtensionInfo() (resultMap map[string]int) {
 	resultMap = make(map[string]int)
-	nasuFiles := db.QueryNasuFiles()
+	nasuFiles := db.NasuFileRepo.QueryNasuFiles()
 	for _, nasuFile := range nasuFiles {
 		if _, ok := resultMap[nasuFile.Extension]; ok {
 			resultMap[nasuFile.Extension] += 1
@@ -74,7 +74,7 @@ func OverallExtensionInfo() (resultMap map[string]int) {
 func UploadFile(file *multipart.FileHeader, filename string,
 	labels []string, tags []string, uploadTime string, extension string) (success bool, reason string) {
 	// pre-check filename duplication
-	precheckeds := db.QueryNasuMetasByType("FILENAME")
+	precheckeds := db.NasuMetaRepo.QueryNasuMetasByType("FILENAME")
 	for _, prechecked := range precheckeds {
 		if prechecked.MetaValue == filename {
 			return false, "存在同名文件，请重命名后再次上传"
@@ -93,7 +93,7 @@ func UploadFile(file *multipart.FileHeader, filename string,
 		return false, "无法打开上传的文件: " + err.Error()
 	}
 	hash := utils.GetFileMd5(src)
-	res := db.QueryNasuFileByHash(hash)
+	res := db.NasuFileRepo.QueryNasuFileByHash(hash)
 	if res != nil {
 		return false, "重复上传相同的文件"
 	}
@@ -120,13 +120,13 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	nasuFile.UploadTime = _uploadTime
 	nasuFile.Extension = extension
 	nasuFile.Hash = hash
-	if success := db.InsertNasuFile(nasuFile); !success {
+	if success := db.NasuFileRepo.InsertNasuFile(nasuFile); !success {
 		return false, "数据更新异常"
 	}
 
 	// update db nasu_meta
 	var nasuMetaFilename = db.NasuMeta{MetaType: "FILENAME", MetaValue: filename}
-	db.InsertNasuMeta(&nasuMetaFilename)
+	db.NasuMetaRepo.InsertNasuMeta(&nasuMetaFilename)
 
 	return true, ""
 }
@@ -136,7 +136,7 @@ func UploadFile(file *multipart.FileHeader, filename string,
 func ListFilesByCondition(filename string, extension string, labels []string, tags []string,
 	startTime string, endTime string, pageSize int, pageNum int) map[string]any {
 	resultMap := make(map[string]any)
-	nasuFiles := db.QueryNasuFilesByCondition(filename, extension, labels, tags, startTime, endTime, pageSize, pageNum)
+	nasuFiles := db.NasuFileRepo.QueryNasuFilesByCondition(filename, extension, labels, tags, startTime, endTime, pageSize, pageNum)
 	resultMap["nasuFiles"] = nasuFiles
 	resultMap["total"] = len(nasuFiles)
 	return resultMap
@@ -147,7 +147,7 @@ func ModifyFile(nasuFile db.NasuFile) bool {
 	if nasuFile.Id == 0 {
 		return false
 	}
-	oldNasuFile := db.QueryNasuFileById(nasuFile.Id)
+	oldNasuFile := db.NasuFileRepo.QueryNasuFileById(nasuFile.Id)
 	if oldNasuFile == nil {
 		return false
 	}
@@ -163,7 +163,7 @@ func ModifyFile(nasuFile db.NasuFile) bool {
 		Tags:      nasuFile.Tags,
 		Extension: extension,
 	}
-	res := db.UpdateNasuFile(&updatedNasuFile)
+	res := db.NasuFileRepo.UpdateNasuFile(&updatedNasuFile)
 	if !res {
 		return false
 	}
@@ -171,8 +171,8 @@ func ModifyFile(nasuFile db.NasuFile) bool {
 	// update nasu_meta
 	res = true
 	if nasuFile.Filename != "" {
-		res = res && db.DeleteNasuMetaByMetaTypeAndMetaValue("FILENAME", oldNasuFile.Filename)
-		res = res && db.InsertNasuMeta(&db.NasuMeta{
+		res = res && db.NasuMetaRepo.DeleteNasuMetaByMetaTypeAndMetaValue("FILENAME", oldNasuFile.Filename)
+		res = res && db.NasuMetaRepo.InsertNasuMeta(&db.NasuMeta{
 			MetaType:  "FILENAME",
 			MetaValue: nasuFile.Filename,
 		})

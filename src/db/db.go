@@ -11,3 +11,9 @@ func NewEngine(path string) *xorm.Engine {
 		return engine
 	}
 }
+
+func Init(path string) {
+	x := NewEngine(path)
+	NasuFileRepo = NewNasuFileRepo(x)
+	NasuMetaRepo = NewNasuMetaRepo(x)
+}
