@@ -30,7 +30,7 @@ func OverallLabelInfo() (resultMap map[string]int) {
 	resultMap = make(map[string]int)
 	nasuFiles := db.NasuFileRepo.QueryNasuFiles()
 	for _, nasuFile := range nasuFiles {
-		labels := strings.Split(nasuFile.Labels, ",")
+		labels := nasuFile.GetLabels()
 		for _, label := range labels {
 			if _, ok := resultMap[label]; ok {
 				resultMap[label] += 1
@@ -46,7 +46,7 @@ func OverallTagInfo() (resultMap map[string]int) {
 	resultMap = make(map[string]int)
 	nasuFiles := db.NasuFileRepo.QueryNasuFiles()
 	for _, nasuFile := range nasuFiles {
-		tags := strings.Split(nasuFile.Tags, ",")
+		tags := nasuFile.GetTags()
 		for _, tag := range tags {
 			if _, ok := resultMap[tag]; ok {
 				resultMap[tag] += 1
@@ -106,6 +106,7 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	location := filepath.Join(targetPath, filename)
 	dst, _ := os.Create(location)
 	defer dst.Close()
+	src.Seek(0, 0)
 	_, err = io.Copy(dst, src)
 	if err != nil {
 		return false, "上传过程中出现未知错误: " + err.Error()
@@ -116,7 +117,7 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	nasuFile.Filename = filename
 	nasuFile.Labels = strings.Join(labels, ",")
 	nasuFile.Tags = strings.Join(tags, ",")
-	nasuFile.Location = location
+	nasuFile.Location = utils.TransformFromPathToLocation(location)
 	nasuFile.Size = utils.TransformSizeToString(&size)
 	nasuFile.UploadTime = _uploadTime
 	nasuFile.Extension = extension

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"strings"
 	"time"
 )
 
@@ -22,4 +23,10 @@ func (nasuFile NasuFile) TableName() string {
 	return "nasu_file"
 }
 
-// TODO: GetLabels() []string
+func (nasuFile NasuFile) GetLabels() []string {
+	return strings.Split(nasuFile.Labels, ",")
+}
+
+func (nasuFile NasuFile) GetTags() []string {
+	return strings.Split(nasuFile.Tags, ",")
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"nasu/src/handler"
+	"net/http"
 )
 
 func routeCommon(engine *gin.Engine) {
@@ -10,6 +11,7 @@ func routeCommon(engine *gin.Engine) {
 }
 
 func routeAuth(engine *gin.RouterGroup) {
+	engine.StaticFS("/upload", http.Dir("./resources"))
 	engine.POST("/changePassword", handler.HandleChangePassword)
 	engine.GET("/overallFileInfo", handler.HandleOverallFileInfo)
 	engine.GET("/overallLabelInfo", handler.HandleOverallLabelInfo)

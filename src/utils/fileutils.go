@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func IsPathOrFileExisted(path string) bool {
@@ -38,4 +39,10 @@ func TransformSizeToString(size *int64) string {
 		*size /= 1024
 	}
 	return strconv.Itoa(int(*size)) + level[counter]
+}
+
+func TransformFromPathToLocation(absPath string) string {
+	absPath = strings.Replace(absPath, "\\", "/", -1)
+	loactionSlice := strings.Split(absPath, "/")
+	return "/api/upload/" + strings.Join(loactionSlice[len(loactionSlice)-2:], "/")
 }
