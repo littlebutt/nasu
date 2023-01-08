@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -98,8 +99,8 @@ func UploadFile(file *multipart.FileHeader, filename string,
 	if res != nil {
 		return false, "重复上传相同的文件"
 	}
-	// TODO: customize hash prefix
-	targetPath := filepath.Join(context.NasuContext.ResourcesDir, hash[:1])
+	hashPrefix, _ := strconv.Atoi(db.NasuMetaRepo.QueryNasuMetaByType("HASH_PREFIX").MetaValue)
+	targetPath := filepath.Join(context.NasuContext.ResourcesDir, hash[:hashPrefix])
 	if existed := utils.IsPathOrFileExisted(targetPath); !existed {
 		_ = os.Mkdir(targetPath, os.ModePerm)
 	}

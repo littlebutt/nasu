@@ -37,6 +37,10 @@ func (l *log) GetLogger() *logrus.Logger {
 	return l.Logger
 }
 
+func (l *log) Debug(format string, args ...interface{}) {
+	l.Logger.Debugf(format, args...)
+}
+
 func (l *log) Info(format string, args ...interface{}) {
 	l.Logger.Infof(format, args...)
 }

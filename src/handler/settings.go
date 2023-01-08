@@ -1,0 +1,36 @@
+package handler
+
+import (
+	"github.com/gin-gonic/gin"
+	"nasu/src/service"
+	"net/http"
+	"strconv"
+)
+
+func HandleChangeHashPrefix(c *gin.Context) {
+	hashPrefix, err := strconv.Atoi(c.PostForm("hashPrefix"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"reason": err.Error(),
+		})
+		return
+	}
+	res := service.ChangeHashPrefix(hashPrefix)
+	c.JSON(http.StatusOK, gin.H{
+		"success": res,
+	})
+}
+
+func HandleChangeMaxFileSize(c *gin.Context) {
+	size, err := strconv.Atoi(c.PostForm("size"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"reason": err.Error(),
+		})
+		return
+	}
+	res := service.ChangeMaxFileSize(size)
+	c.JSON(http.StatusOK, gin.H{
+		"success": res,
+	})
+}

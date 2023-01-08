@@ -82,6 +82,7 @@ func HandleModifyFile(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"reason": "id字段不正确",
 		})
+		return
 	}
 	filename := c.PostForm("filename")
 	labels := strings.Replace(c.PostForm("labels"), ":", ",", -1)

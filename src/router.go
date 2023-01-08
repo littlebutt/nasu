@@ -21,4 +21,6 @@ func routeAuth(engine *gin.RouterGroup) {
 	engine.GET("/listFilesByCondition", handler.HandleListFilesByCondition)
 	engine.POST("/modifyFile", handler.HandleModifyFile)
 	engine.POST("/deleteFile", handler.HandleDeleteFile)
+	engine.POST("/changeHashPrefix", handler.HandleChangeHashPrefix)
+	engine.POST("/changeMaxFileSize", handler.HandleChangeMaxFileSize)
 }

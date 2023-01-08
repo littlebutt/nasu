@@ -30,14 +30,14 @@ func InitLog() {
 }
 
 func BuildResourceDir() {
-	log.Log.Info("[Nasu-init] Start to check if resources path exists...")
+	log.Log.Debug("[Nasu-init] Start to check if resources path exists...")
 	if res := utils.IsPathOrFileExisted(RESOURCES_PATH); res {
-		log.Log.Info("[Nasu-init] Resources path exists")
+		log.Log.Debug("[Nasu-init] Resources path exists")
 	} else {
-		log.Log.Info("[Nasu-init] Resourcs path does not exit and try to build it...")
+		log.Log.Debug("[Nasu-init] Resourcs path does not exit and try to build it...")
 		err := os.Mkdir(RESOURCES_PATH, os.ModePerm)
 		if err != nil {
-			log.Log.Info("[Nasu-init] Fail to build resources path, err: %s", err.Error())
+			log.Log.Error("[Nasu-init] Fail to build resources path, err: %s", err.Error())
 		}
 	}
 	absPath, _ := filepath.Abs(RESOURCES_PATH)
@@ -45,29 +45,39 @@ func BuildResourceDir() {
 }
 
 func InitDB() {
-	log.Log.Info("[Nasu-init] Start to init db...")
+	log.Log.Debug("[Nasu-init] Start to init db...")
 	db.Init(NASU_DB_PATH)
 	nasuMeta := db.NasuMeta{
 		MetaType:  "PASSWORD",
 		MetaValue: service.DEFAULT_PASSWORD, // md5 for "admin"
 	}
 	db.NasuMetaRepo.InsertNasuMetaIfNotExistedByMetaType(&nasuMeta)
+	nasuMeta = db.NasuMeta{
+		MetaType:  "HASH_PREFIX",
+		MetaValue: "1",
+	}
+	db.NasuMetaRepo.InsertNasuMetaIfNotExistedByMetaType(&nasuMeta)
+	nasuMeta = db.NasuMeta{
+		MetaType:  "MAX_FILE_SIZE",
+		MetaValue: "16",
+	}
+	db.NasuMetaRepo.InsertNasuMetaIfNotExistedByMetaType(&nasuMeta)
 	context.NasuContext.Password = db.NasuMetaRepo.QueryNasuMetaByType("PASSWORD").MetaValue
-	log.Log.Info("[Nasu-init] Db has been inited!")
+	log.Log.Debug("[Nasu-init] Db has been inited!")
 }
 
 func InitRoute() *gin.Engine {
-	log.Log.Info("[Nasu-init] Start to init route...")
+	log.Log.Debug("[Nasu-init] Start to init route...")
 	router := gin.New()
-	// TODO: customize maximum uploading file size
-	router.MaxMultipartMemory = 16 << 30 // 16GB
+	maxFileSize, _ := strconv.Atoi(db.NasuMetaRepo.QueryNasuMetaByType("MAX_FILE_SIZE").MetaValue)
+	router.MaxMultipartMemory = int64(maxFileSize) << 30 // 16GB
 	router.Use(gin.Recovery())
 	router.Use(middleware.LogRequired())
 	authorized := router.Group("/api")
 	authorized.Use(middleware.AuthRequired())
 	routeAuth(authorized)
 	routeCommon(router)
-	log.Log.Info("[Nasu-init] route has been inited!")
+	log.Log.Debug("[Nasu-init] route has been inited!")
 	return router
 }
 
@@ -87,7 +97,7 @@ func main() {
 	log.Log.Info("[Nasu-init] Start to run App Nasu on %d", port)
 	err = router.Run(":" + strconv.Itoa(port))
 	if err != nil {
-		log.Log.Info("[Nasu-init] Fail to run App Nasu, err: %s", err.Error())
+		log.Log.Error("[Nasu-init] Fail to run App Nasu, err: %s", err.Error())
 		return
 	}
 }
