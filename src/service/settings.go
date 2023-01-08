@@ -1,6 +1,7 @@
 package service
 
 import (
+	"nasu/src/context"
 	"nasu/src/db"
 	"strconv"
 )
@@ -23,5 +24,6 @@ func ChangeTokenTtl(tokenTtl int64) bool {
 	if tokenTtl <= 0 {
 		return false
 	}
+	context.NasuContext.TokenTTL = tokenTtl
 	return db.NasuMetaRepo.UpdateNasuMetaByType("TOKEN_TTL", strconv.Itoa(int(tokenTtl)))
 }
