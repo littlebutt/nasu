@@ -62,7 +62,14 @@ func InitDB() {
 		MetaValue: "16",
 	}
 	db.NasuMetaRepo.InsertNasuMetaIfNotExistedByMetaType(&nasuMeta)
+	nasuMeta = db.NasuMeta{
+		MetaType:  "TOKEN_TTL",
+		MetaValue: "3",
+	}
+	db.NasuMetaRepo.InsertNasuMetaIfNotExistedByMetaType(&nasuMeta)
 	context.NasuContext.Password = db.NasuMetaRepo.QueryNasuMetaByType("PASSWORD").MetaValue
+	tokenTtl, _ := strconv.Atoi(db.NasuMetaRepo.QueryNasuMetaByType("TOKEN_TTL").MetaValue)
+	context.NasuContext.TokenTTL = int64(tokenTtl)
 	log.Log.Debug("[Nasu-init] Db has been inited!")
 }
 

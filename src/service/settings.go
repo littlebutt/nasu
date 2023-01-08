@@ -18,3 +18,10 @@ func ChangeMaxFileSize(size int) bool {
 	}
 	return db.NasuMetaRepo.UpdateNasuMetaByType("MAX_FILE_SIZE", strconv.Itoa(size))
 }
+
+func ChangeTokenTtl(tokenTtl int64) bool {
+	if tokenTtl <= 0 {
+		return false
+	}
+	return db.NasuMetaRepo.UpdateNasuMetaByType("TOKEN_TTL", strconv.Itoa(int(tokenTtl)))
+}

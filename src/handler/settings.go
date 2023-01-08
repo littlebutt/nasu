@@ -34,3 +34,17 @@ func HandleChangeMaxFileSize(c *gin.Context) {
 		"success": res,
 	})
 }
+
+func HandleChangeTokenTtl(c *gin.Context) {
+	tokenTtlStr := c.PostForm("tokenTtl")
+	tokenTtl, err := strconv.Atoi(tokenTtlStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"reason": err.Error(),
+		})
+	}
+	res := service.ChangeTokenTtl(int64(tokenTtl))
+	c.JSON(http.StatusOK, gin.H{
+		"success": res,
+	})
+}
