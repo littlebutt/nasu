@@ -1,11 +1,22 @@
 package log
 
+import "github.com/sirupsen/logrus"
+
+//go:generate mockgen -source=./log.go -destination=./log_mock.go -package=log
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 )
+
+type ILog interface {
+	GetLogger() *logrus.Logger
+	Debug(format string, args ...interface{})
+	Info(format string, args ...interface{})
+	Warn(format string, args ...interface{})
+	Error(format string, args ...interface{})
+	Fatal(format string, args ...interface{})
+}
 
 type log struct {
 	Logger *logrus.Logger
