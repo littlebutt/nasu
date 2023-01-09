@@ -24,10 +24,10 @@ type log struct {
 
 var Log log
 
-func Init(path string) {
+func Init(path string, isDebug bool) {
 	targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND, os.ModeAppend)
 	if err != nil {
-		fmt.Printf("[Nasu-Log] Fail to open log file, filename: %s, err: %s\n", path, err.Error())
+		fmt.Printf("已生成resources目录，你可以ctrl+C或者cmd+C结束进程后再次启动了！")
 	}
 	writers := []io.Writer{
 		targetFile,
@@ -40,7 +40,11 @@ func Init(path string) {
 	logger := logrus.New()
 	logger.SetFormatter(textFormatter)
 	logger.Out = io.MultiWriter(writers...)
-	logger.SetLevel(logrus.DebugLevel)
+	if isDebug {
+		logger.SetLevel(logrus.DebugLevel)
+	} else {
+		logger.SetLevel(logrus.InfoLevel)
+	}
 	Log = log{Logger: logger}
 }
 

@@ -20,13 +20,13 @@ const RESOURCES_PATH string = "./resources"
 const NASU_DB_PATH string = "./resources/nasu.db"
 const LOG_FILENAME string = "nasu.log"
 
-func InitLog() {
+func InitLog(isDebug bool) {
 	logFile := path.Join(RESOURCES_PATH, LOG_FILENAME)
 	if res := utils.IsPathOrFileExisted(logFile); !res {
 		f, _ := os.Create(logFile)
 		defer f.Close()
 	}
-	log.Init(logFile)
+	log.Init(logFile, isDebug)
 }
 
 func BuildResourceDir() {
@@ -91,12 +91,17 @@ func InitRoute() *gin.Engine {
 func main() {
 	var host string
 	var port int
+	var isDebug bool
 	flag.StringVar(&host, "h", "localhost", "hostname")
 	flag.IntVar(&port, "p", 8080, "port")
-	gin.SetMode(gin.ReleaseMode)
+	flag.BoolVar(&isDebug, "d", false, "debug")
+	flag.Parse()
+	if !isDebug {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	var err error
-	InitLog()
+	InitLog(isDebug)
 	BuildResourceDir()
 	InitDB()
 	router := InitRoute()
