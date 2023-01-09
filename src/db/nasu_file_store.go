@@ -6,6 +6,7 @@ import (
 	"xorm.io/xorm"
 )
 
+//go:generate mockgen -source=./nasu_file_store.go -destination=./nasu_file_store_mock.go -package=db
 type NasuFileStore interface {
 	InsertNasuFile(nasuFile NasuFile) bool
 	QueryNasuFileByHash(hash string) *NasuFile

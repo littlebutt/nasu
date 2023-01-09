@@ -5,6 +5,7 @@ import (
 	"xorm.io/xorm"
 )
 
+//go:generate mockgen -source=./nasu_meta_store.go -destination=./nasu_meta_store_mock.go -package=db
 type NasuMetaStore interface {
 	InsertNasuMetaIfNotExistedByMetaType(nasuMeta *NasuMeta) bool
 	QueryNasuMetaByType(metaType string) *NasuMeta

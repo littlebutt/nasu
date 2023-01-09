@@ -24,8 +24,7 @@ func AuthRequired() gin.HandlerFunc {
 			return
 		}
 		password := context.NasuContext.Password
-		// redirect if timeout (3 * 60 * 60 s)
-		//TODO: customize this value
+		// redirect if timeout
 		if targetPassword != password || (time.Now().Unix()-int64(targetTimestamp) > context.NasuContext.TokenTTL*60*60) {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
