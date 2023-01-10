@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/handler"
+	"github.com/littlebutt/nasu/src/handler"
 	"net/http"
 )
 

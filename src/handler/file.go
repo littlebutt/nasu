@@ -2,8 +2,8 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/db"
-	"nasu/src/service"
+	"github.com/littlebutt/nasu/src/db"
+	"github.com/littlebutt/nasu/src/service"
 	"net/http"
 	"strconv"
 	"strings"

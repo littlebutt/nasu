@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/log"
+	"github.com/littlebutt/nasu/src/log"
 	"time"
 )
 

@@ -2,8 +2,8 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/context"
-	"nasu/src/service"
+	"github.com/littlebutt/nasu/src/context"
+	"github.com/littlebutt/nasu/src/service"
 	"net/http"
 )
 

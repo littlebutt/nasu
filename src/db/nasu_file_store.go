@@ -1,7 +1,7 @@
 package db
 
 import (
-	"nasu/src/log"
+	"github.com/littlebutt/nasu/src/log"
 	"strings"
 	"xorm.io/xorm"
 )

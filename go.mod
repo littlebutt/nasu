@@ -1,4 +1,4 @@
-module nasu
+module github.com/littlebutt/nasu
 
 go 1.19
 

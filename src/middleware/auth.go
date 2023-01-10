@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/context"
+	"github.com/littlebutt/nasu/src/context"
 	"net/http"
 	"strconv"
 	"strings"

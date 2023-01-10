@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/golang/mock/gomock"
+	"github.com/littlebutt/nasu/src/db"
 	"github.com/stretchr/testify/assert"
-	"nasu/src/db"
 	"testing"
 )
 

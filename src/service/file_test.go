@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/golang/mock/gomock"
-	"nasu/src/db"
+	"github.com/littlebutt/nasu/src/db"
 	"testing"
 	"time"
 )

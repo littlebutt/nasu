@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"nasu/src/service"
+	"github.com/littlebutt/nasu/src/service"
 	"net/http"
 	"strconv"
 )

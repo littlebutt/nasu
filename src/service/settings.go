@@ -1,8 +1,8 @@
 package service
 
 import (
-	"nasu/src/context"
-	"nasu/src/db"
+	"github.com/littlebutt/nasu/src/context"
+	"github.com/littlebutt/nasu/src/db"
 	"strconv"
 )
 
