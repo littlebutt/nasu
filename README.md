@@ -2,7 +2,7 @@
 
 ![Logo](./docs/imgs/logo.jpg) </div>
 
-![](https://img.shields.io/github/license/littlebutt/nasu) ![](https://img.shields.io/github/go-mod/go-version/littlebutt/nasu)
+[![Go Report Card](https://goreportcard.com/badge/github.com/littlebutt/nasu)](https://goreportcard.com/report/github.com/littlebutt/nasu) ![](https://img.shields.io/github/license/littlebutt/nasu) ![](https://img.shields.io/github/go-mod/go-version/littlebutt/nasu)
 
 Nasu是一款面向个人的NAS平台，其目的是“一次部署，随时存储”。用户只要部署一次就可以像浏览网页一样上传和预览文件内容。和传统的网盘相比，其优点有一下几个方面：
 
@@ -35,6 +35,10 @@ go build nasu/src
 ```
 
 ### Docker安装
+
+```shell
+docker build -t nasu .
+```
 
 ## 运行
 
