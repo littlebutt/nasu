@@ -2,7 +2,7 @@
 
 ![Logo](./docs/imgs/logo.jpg) </div>
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/littlebutt/nasu)](https://goreportcard.com/report/github.com/littlebutt/nasu) ![](https://img.shields.io/github/license/littlebutt/nasu) ![](https://img.shields.io/github/go-mod/go-version/littlebutt/nasu)
+[![Go Report Card](https://goreportcard.com/badge/github.com/littlebutt/nasu)](https://goreportcard.com/report/github.com/littlebutt/nasu) ![](https://img.shields.io/github/license/littlebutt/nasu) ![](https://img.shields.io/github/go-mod/go-version/littlebutt/nasu) ![](https://img.shields.io/github/actions/workflow/status/littlebutt/nasu/docker-image.yml) ![](https://img.shields.io/github/checks-status/littlebutt/nasu/main) ![](https://img.shields.io/readthedocs/go) ![](https://img.shields.io/github/languages/count/littlebutt/nasu) ![](https://img.shields.io/badge/QQ-1136681910-9cf?logo=tencentqq&logoColor=9cf) 
 
 Nasu是一款面向个人的NAS平台，其目的是“一次部署，随时存储”。用户只要部署一次就可以像浏览网页一样上传和预览文件内容。和传统的网盘相比，其优点有一下几个方面：
 
