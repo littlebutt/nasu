@@ -1,12 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import 'semantic-ui-css/semantic.min.css'
-import "./components/button"
+import SideBar from "./components/sidebar";
+
 
 function App() {
+    const [active, setActive] = useState('overview')
   return (
     <div>
-        <button className="ui button">Click Here</button>
+        <SideBar setActive={setActive}/>
     </div>
   );
 }
