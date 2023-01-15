@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Col, message, Row} from 'antd';
 import ChartCard from "./chartcard";
 import ListCard from "./listcard";
-import axios from "axios";
+import Axios from "../axios";
 
 interface IOverview {
     show: boolean
@@ -14,12 +14,11 @@ const Overview: React.FC<IOverview> = (props) => {
     const [tagLabels, setTagLabels] = useState<Array<string>>([]);
     const [tagData, setTagData] = useState<Array<number>>([])
     const [messageApi, contextHolder] = message.useMessage();
-    const handleOverallLabelInfo = () => axios({
+    const handleOverallLabelInfo = () => Axios({
         method: 'GET',
-        url: 'http://localhost:8080/api/overallLabelInfo',
+        url: '/api/overallLabelInfo',
         headers: {
-            'Authorization': window.token,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Authorization': window.token
         }
         }).then(res => {
             if (res.status == 200) {
@@ -31,13 +30,14 @@ const Overview: React.FC<IOverview> = (props) => {
                     content: '请求错误',
                 });
             }
+        }).catch(err => {
+            console.warn(err);
     })
-    const handleOverallTagInfo = () => axios({
+    const handleOverallTagInfo = () => Axios({
         method: 'GET',
-        url: 'http://localhost:8080/api/overallTagInfo',
+        url: '/api/overallTagInfo',
         headers: {
-            'Authorization': window.token,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Authorization': window.token
         }
     }).then(res => {
         if (res.status == 200) {
@@ -49,13 +49,14 @@ const Overview: React.FC<IOverview> = (props) => {
                 content: '请求错误',
             });
         }
+    }).catch(err => {
+        console.warn(err);
     })
 
     useEffect(() => {
         handleOverallLabelInfo();
         handleOverallTagInfo();
     }, [])
-    // @ts-ignore
     return (
         <>
         {props.show &&

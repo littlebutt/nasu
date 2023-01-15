@@ -1,12 +1,10 @@
 import React, {useState} from 'react';
-import './App.css';
 import SideBar from "./components/sidebar";
 import {Col, Row} from "antd";
 import Overview from "./components/overview";
 
 
 function App() {
-    window.host = 'http://' + document.location.host + ':' + document.location.port;
     const [active, setActive] = useState('overview')
   return (
     <>
