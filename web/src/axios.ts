@@ -7,5 +7,5 @@ const Axios = axios.create({
 
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 Axios.defaults.headers.common['Authorization'] = window.token;
-
+// TODO: interceptor
 export default Axios

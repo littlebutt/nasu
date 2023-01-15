@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ReactEcharts from "echarts-for-react"
+import {Empty, Space} from "antd";
 
 
 
@@ -22,10 +23,6 @@ const ChartCard: React.FC<IChartCard> = (props) => {
     }
 
     const options = {
-        title : {
-          text: props.title,
-          left: 'left'
-        },
         tooltip: {
             trigger: "item",
             formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -41,7 +38,12 @@ const ChartCard: React.FC<IChartCard> = (props) => {
         ]
     }
     return (
-        <ReactEcharts option={options} style={{width: props.width + "px", height: props.height + "px"}}/>
+        <div style={{height: '300px'}}>
+            <h2>{props.title}</h2>
+            {props.labels.length === 0 ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> :
+                <ReactEcharts option={options} style={{width: props.width + "px", height: props.height + "px"}}/>}
+        </div>
+
     )
 }
 
