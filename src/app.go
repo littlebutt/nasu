@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/littlebutt/nasu/src/context"
 	"github.com/littlebutt/nasu/src/db"
@@ -73,13 +74,19 @@ func InitDB() {
 	log.Log.Debug("[Nasu-init] Db has been inited!")
 }
 
-func InitRoute() *gin.Engine {
+func InitRoute(isDebug bool) *gin.Engine {
 	log.Log.Debug("[Nasu-init] Start to init route...")
 	router := gin.New()
 	maxFileSize, _ := strconv.Atoi(db.NasuMetaRepo.QueryNasuMetaByType("MAX_FILE_SIZE").MetaValue)
 	router.MaxMultipartMemory = int64(maxFileSize) << 30 // 16GB
 	router.Use(gin.Recovery())
 	router.Use(middleware.LogRequired())
+	if isDebug {
+		config := cors.DefaultConfig()
+		config.AllowAllOrigins = true
+		config.AllowHeaders = append(config.AllowHeaders, "Authorization")
+		router.Use(cors.New(config))
+	}
 	authorized := router.Group("/api")
 	authorized.Use(middleware.AuthRequired())
 	routeAuth(authorized)
@@ -104,7 +111,7 @@ func main() {
 	InitLog(isDebug)
 	BuildResourceDir()
 	InitDB()
-	router := InitRoute()
+	router := InitRoute(isDebug)
 
 	log.Log.Info("[Nasu-init] Start to run App Nasu on %d", port)
 	err = router.Run(":" + strconv.Itoa(port))
