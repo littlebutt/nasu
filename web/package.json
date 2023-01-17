@@ -23,6 +23,7 @@
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
     "typescript": "^4.9.4",
+    "typescript-cookie": "^1.0.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

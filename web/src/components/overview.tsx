@@ -21,86 +21,50 @@ const Overview: React.FC<IOverview> = (props) => {
     const [fileIdx, setFileIdx] = useState<number>(0);
     const [files, setFiles] = useState<Array<FileInfo>>([]);
     const [fileLoading, setFileLoading] = useState<boolean>(false);
+    const [dataFlag, setDataFlag] = useState<boolean>(false);
     const [messageApi] = message.useMessage();
     const navigate = useNavigate();
 
     const handleOverallLabelInfo = () => Axios({
         method: 'GET',
         url: '/api/overallLabelInfo',
-        headers: {
-            'Authorization': window.token
-        }
         }).then(res => {
             if (res.status === 200) {
                 setLabelLabels(Object.keys(res.data));
                 setLabelData(Object.values(res.data));
-            } else if (res.status === 401) {
-                navigate('/welcome');
-                messageApi.open({
-                    type: 'warning',
-                    content: '请重新登录',
-                });
-            } else {
-                messageApi.open({
-                    type: 'error',
-                    content: '请求错误',
-                });
             }
         }).catch(err => {
             console.warn(err);
     });
     const handleOverallTagInfo = () => Axios({
         method: 'GET',
-        url: '/api/overallTagInfo',
-        headers: {
-            'Authorization': window.token
-        }
+        url: '/api/overallTagInfo'
     }).then(res => {
         if (res.status === 200) {
             setTagLabels(Object.keys(res.data));
             setTagData(Object.values(res.data));
-        } else {
-            messageApi.open({
-                type: 'error',
-                content: '请求错误',
-            });
         }
     }).catch(err => {
         console.warn(err);
     });
     const handleOverallExtensionInfo = () => Axios({
         method: 'GET',
-        url: '/api/overallExtensionInfo',
-        headers: {
-            'Authorization': window.token
-        }
+        url: '/api/overallExtensionInfo'
     }).then(res => {
         if (res.status === 200) {
             setExtensionLabels(Object.keys(res.data));
             setExtensionData(Object.values(res.data));
-        } else {
-            messageApi.open({
-                type: 'error',
-                content: '请求错误',
-            });
         }
     }).catch(err => {
         console.warn(err);
     });
     const buildFilenames = () => Axios({
         method: 'GET',
-        url: '/api/overallFileInfo',
-        headers: {
-            'Authorization': window.token
-        }
+        url: '/api/overallFileInfo'
     }).then(res => {
         if (res.status === 200) {
             setFilenames(res.data?.filename);
-        } else {
-            messageApi.open({
-                type: 'error',
-                content: '请求错误',
-            });
+            setDataFlag(true);
         }
     }).catch(err => {
         console.warn(err);
@@ -111,9 +75,6 @@ const Overview: React.FC<IOverview> = (props) => {
             Axios({
                 method: 'GET',
                 url: '/api/listFilesByCondition',
-                headers: {
-                    'Authorization': window.token
-                }
             }).then(res => {
                 if (res.status === 200) {
                     let _f = res.data?.nasuFiles[0];
@@ -123,7 +84,7 @@ const Overview: React.FC<IOverview> = (props) => {
                         labels: _f?.Labels,
                         uploadTime: _f?.UploadTime
                     };
-                    setFiles([...files, file]);
+                    setFiles(files => [...files, file]);
                 }
             }).catch(err => {
                 console.warn(err);
@@ -131,7 +92,7 @@ const Overview: React.FC<IOverview> = (props) => {
 
         }
         setFileLoading(false);
-        setFileIdx(Math.min(filenames.length, fileIdx + 5));
+        setFileIdx(fileIdx => Math.min(filenames.length, fileIdx + 5));
     }
 
 
@@ -139,10 +100,9 @@ const Overview: React.FC<IOverview> = (props) => {
         handleOverallLabelInfo();
         handleOverallTagInfo();
         handleOverallExtensionInfo();
-        handleLoadMore();
         buildFilenames();
         handleLoadMore();
-    }, []);
+    }, [dataFlag]);
     return (
         <div style={{margin: '20px'}}>
         {props.show &&
@@ -155,14 +115,14 @@ const Overview: React.FC<IOverview> = (props) => {
             </Row>
             <Row>
                 <Col span={8}>
-                        <ChartCard width={400} height={300} title={"标签数据"} labels={labelLabels} data={labelData}/>
+                        <ChartCard width={300} height={250} title={"标签数据"} labels={labelLabels} data={labelData}/>
                 </Col>
                 <Col span={8}>
 
-                        <ChartCard width={400} height={300} title={"标记数据"} labels={tagLabels} data={tagData}/>
+                        <ChartCard width={300} height={250} title={"标记数据"} labels={tagLabels} data={tagData}/>
                 </Col>
                 <Col span={8}>
-                        <ChartCard width={400} height={300} title={"类型数据"} labels={extensionLabels} data={extensionData}/>
+                        <ChartCard width={300} height={250} title={"类型数据"} labels={extensionLabels} data={extensionData}/>
                 </Col>
             </Row>
             <Row>

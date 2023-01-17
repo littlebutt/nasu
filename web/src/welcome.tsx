@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {Button, Col, Input, message, Row, Space} from "antd";
 import Axios from "./axios";
 import {useNavigate} from "react-router-dom";
+import {setCookie} from "typescript-cookie";
+import axios from "axios";
 
 function Welcome() {
     const [password, setPassword] = useState('');
@@ -13,8 +15,8 @@ function Welcome() {
     }
     const handleOnClick = () => {
         const hash = window.md5(password);
-        Axios(
-            '/login',
+        axios(
+            Axios.defaults.baseURL + '/login',
             {
                 method: 'POST',
                 headers: {
@@ -26,7 +28,8 @@ function Welcome() {
             }
         ).then(res => {
             if (res.status == 200) {
-                window.token = res.data?.token;
+                console.log(res.data?.token)
+                setCookie('token', res.data?.token);
                 navigate('/');
             } else {
                 messageApi.open({

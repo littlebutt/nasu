@@ -4,7 +4,7 @@ import {Button, Empty, List, Skeleton} from "antd";
 type FileInfo = {
     id: number,
     filename: string,
-    labels: string[],
+    labels: string,
     uploadTime: string
 }
 
@@ -42,9 +42,9 @@ const ListCard: React.FC<IListCard> = (props) => {
                             <Skeleton avatar title={false} loading={props.loading} active>
                                 <List.Item.Meta
                                     title={<a href="">{item.filename}</a>}
-                                    description={item.labels.join(',')}
+                                    description={item?.labels}
                                 />
-                                <div>{item.uploadTime}</div>
+                                <div>{item.uploadTime.split('T')[0]}</div>
                             </Skeleton>
                         </List.Item>
                     )

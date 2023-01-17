@@ -27,7 +27,7 @@ const ChartCard: React.FC<IChartCard> = (props) => {
             trigger: "item",
             formatter: "{a} <br/>{b}: {c} ({d}%)"
         },
-        color: ['#f5222d', '#fadb14', '#a0d911', '#13c2c2', '#722ed1'],
+        color: ['#ffccc7', '#fff1b8', '#f4ffb8', '#b5f5ec', '#bae0ff'],
         series: [
             {
                 name: props.title,
