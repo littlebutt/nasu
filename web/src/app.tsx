@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import SideBar from "./components/sidebar";
 import {Col, Row} from "antd";
 import Overview from "./components/overview";
+import Files from "./components/files";
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
             </Col>
             <Col span={20}>
                 <Overview show={active === 'overview'}/>
+                <Files show={active === 'files'}/>
             </Col>
         </Row>
 

@@ -30,7 +30,7 @@ const ListCard: React.FC<IListCard> = (props) => {
         ) : null
 
     return (
-        <div style={{height: '250px'}}>
+        <div style={{height: '250px', width: '500px'}}>
             <h2>{props.title}</h2>
             {props.files.length === 0 ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> :
                 <List
