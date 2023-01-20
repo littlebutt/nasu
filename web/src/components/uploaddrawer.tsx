@@ -9,7 +9,8 @@ import moment from 'moment';
 interface IUploadDrawer {
     show: boolean,
     setShow: (b: boolean) => void,
-    labelOptions: any[]
+    labelOptions: any[],
+    refresh: () => void
 }
 
 const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
@@ -48,7 +49,11 @@ const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
             }
         }).catch(err => {
             console.warn(err);
-        })
+        }).finally(() => {
+            setUploading(false);
+            props.setShow(false);
+            props.refresh();
+    })
 
     const handleUpload = () => {
         setUploading(true);
@@ -60,7 +65,6 @@ const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
         const now = moment().format('yyyy-MM-DD HH:mm:ss');
         data.append('uploadTime', now);
         upload(data);
-        setUploading(false);
     }
 
     return (

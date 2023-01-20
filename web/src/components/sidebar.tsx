@@ -24,7 +24,7 @@ const SideBar: React.FC<ISidebar> = (props) => {
     return (
         <Menu
             onClick={onClick}
-            style={{ width: 256, top: 0, bottom: 0, height: 753}}
+            style={{ width: 256, top: 0, bottom: 0, height: 753, backgroundColor: '#5D2667'}}
             defaultSelectedKeys={['overview']}
             mode="vertical"
             items={items}

@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Col, DatePicker, Input, Row, Select, Space, Table, Tag} from "antd";
-import { SearchOutlined, FileAddTwoTone, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import tagRender, {tagOptions, toParam} from "./tagrender";
 import {ColumnsType} from "antd/es/table";
 import Axios from "../axios";
 import Uploaddrawer from "./uploaddrawer";
+import {Label} from "semantic-ui-react";
 
 
 interface FileDetail {
@@ -54,7 +55,7 @@ const Files: React.FC<IFiles> = (props) => {
                 <>
                     {
                         labels.map(label => {
-                            return (
+                            return ( label &&
                                 <Tag key={label}>
                                     {label}
                                 </Tag>
@@ -255,12 +256,12 @@ const Files: React.FC<IFiles> = (props) => {
                             </Space>
                         </Col>
                         <Col span={5}>
-                            <Button type='default' icon={<SearchOutlined />} style={{float: 'right'}} onClick={() => handleListFilesByCondition({
+                            <Button type='default' style={{float: 'right'}} onClick={() => handleListFilesByCondition({
                                 filename: filename, endTime: endTime, extension: extension, labels: labels, startTime: startTime, tags: tags
                             })}>查询</Button>
                         </Col>
                         <Col span={2} style={{marginLeft: '25px'}}>
-                            <Button type='primary' icon={<FileAddTwoTone />} onClick={handleClickUpload}>上传</Button>
+                            <Button type='primary' onClick={handleClickUpload}>上传</Button>
                         </Col>
                     </Row>
                     <Row style={{marginTop: '10px'}} >
@@ -268,7 +269,7 @@ const Files: React.FC<IFiles> = (props) => {
                             <Table columns={tableColumns} dataSource={data} style={{width: '1190px'}}/>
                         </Col>
                     </Row>
-                    <Uploaddrawer show={showUpload} setShow={setShowUpload} labelOptions={labelOptions}/>
+                    <Uploaddrawer show={showUpload} setShow={setShowUpload} labelOptions={labelOptions} refresh={handleListFilesByCondition}/>
                 </>
             }
         </div>

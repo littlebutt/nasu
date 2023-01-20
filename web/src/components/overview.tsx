@@ -74,6 +74,9 @@ const Overview: React.FC<IOverview> = (props) => {
             Axios({
                 method: 'GET',
                 url: '/api/listFilesByCondition',
+                params: {
+                    filename: filenames[i]
+                }
             }).then(res => {
                 if (res.status === 200) {
                     let _f = res.data?.nasuFiles[0];
@@ -106,12 +109,6 @@ const Overview: React.FC<IOverview> = (props) => {
         <div style={{margin: '20px'}}>
         {props.show &&
         <>
-            <Row>
-                <Col span={4}>
-                    <h1>概况总览</h1>
-                </Col>
-                <Col span={20}/>
-            </Row>
             <Row>
                 <Col span={8}>
                         <ChartCard width={300} height={250} title={"标签数据"} labels={labelLabels} data={labelData}/>
