@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Empty, message, Row, Space} from 'antd';
+import {Col, Empty, Row, Space} from 'antd';
 import ChartCard from "./chartcard";
 import ListCard, {FileInfo} from "./listcard";
 import Axios from "../axios";
@@ -22,7 +22,6 @@ const Overview: React.FC<IOverview> = (props) => {
     const [files, setFiles] = useState<Array<FileInfo>>([]);
     const [fileLoading, setFileLoading] = useState<boolean>(false);
     const [dataFlag, setDataFlag] = useState<boolean>(false);
-    const [messageApi] = message.useMessage();
     const navigate = useNavigate();
 
     const handleOverallLabelInfo = () => Axios({

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Col, DatePicker, Input, Row, Select, Space, Table, Tag} from "antd";
 import { SearchOutlined, FileAddTwoTone, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import tagRender from "./tagrender";
+import tagRender, {tagOptions, toParam} from "./tagrender";
 import {ColumnsType} from "antd/es/table";
 import Axios from "../axios";
+import Uploaddrawer from "./uploaddrawer";
 
 
 interface FileDetail {
@@ -35,38 +36,7 @@ const Files: React.FC<IFiles> = (props) => {
     const [tags, setTags] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
-
-    const tagOptions = [
-        {
-            param: 0,
-            value: '#ffccc7',
-            label: "红"
-        },{
-            param: 1,
-            value: '#fff1b8',
-            label: "黄"
-        },{
-            param: 2,
-            value: '#f4ffb8',
-            label: "绿"
-        },{
-            param: 3,
-            value: '#b5f5ec',
-            label: "蓝"
-        },{
-            param: 4,
-            value: '#bae0ff',
-            label: "紫"
-        }
-    ];
-    const toParam = (value: string) => {
-        for (let tagOption of tagOptions) {
-            if (tagOption.value === value) {
-                return tagOption.param;
-            }
-        }
-        return '';
-    }
+    const [showUpload, setShowUpload] = useState(false);
     const tableColumns: ColumnsType<FileDetail> = [
         {
             title: "文件名",
@@ -112,7 +82,7 @@ const Files: React.FC<IFiles> = (props) => {
                             return (
                                 <>
                                     {color !== 'null' &&
-                                        <Tag color={color} key={tag}>{" "}</Tag>
+                                        <Tag color={color} key={tag}>{'\u3000'}</Tag>
                                     }
                                 </>
                             )
@@ -125,9 +95,9 @@ const Files: React.FC<IFiles> = (props) => {
             dataIndex: 'operation',
             render: (_, record) => (
                 <Space size='middle'>
-                    <Button shape='circle' icon={<EyeOutlined />}/>
-                    <Button shape='circle' icon={<EditOutlined />}/>
-                    <Button shape='circle' icon={<DeleteOutlined />}/>
+                    <Button shape='circle' size='small' icon={<EyeOutlined />}/>
+                    <Button shape='circle' size='small' icon={<EditOutlined />}/>
+                    <Button shape='circle' size='small' icon={<DeleteOutlined />}/>
                 </Space>
             )
         }
@@ -152,6 +122,10 @@ const Files: React.FC<IFiles> = (props) => {
     const handleChangeDate = (d: any, s: string[]) => {
         setStartTime(s[0] ? s[0] + " 00:00:00" : "");
         setEndTime(s[1] ? s[1] + " 23:59:59" : "");
+    }
+
+    const handleClickUpload = () => {
+        setShowUpload(true);
     }
 
     const handleOverallExtensionInfo = () => Axios({
@@ -242,7 +216,7 @@ const Files: React.FC<IFiles> = (props) => {
                         <Col span={8}>
                             <Space direction='horizontal'>
                                 <label>扩展名：</label>
-                                <Select style={{width: '250px'}} placeholder="扩展名" options={extensionOptions} onChange={handleChangeExtension}/>
+                                <Select style={{width: '250px'}} allowClear placeholder="扩展名" options={extensionOptions} onChange={handleChangeExtension}/>
                             </Space>
                         </Col>
 
@@ -286,7 +260,7 @@ const Files: React.FC<IFiles> = (props) => {
                             })}>查询</Button>
                         </Col>
                         <Col span={2} style={{marginLeft: '25px'}}>
-                            <Button type='primary' icon={<FileAddTwoTone />}>上传</Button>
+                            <Button type='primary' icon={<FileAddTwoTone />} onClick={handleClickUpload}>上传</Button>
                         </Col>
                     </Row>
                     <Row style={{marginTop: '10px'}} >
@@ -294,6 +268,7 @@ const Files: React.FC<IFiles> = (props) => {
                             <Table columns={tableColumns} dataSource={data} style={{width: '1190px'}}/>
                         </Col>
                     </Row>
+                    <Uploaddrawer show={showUpload} setShow={setShowUpload} labelOptions={labelOptions}/>
                 </>
             }
         </div>

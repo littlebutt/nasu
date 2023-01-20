@@ -7,7 +7,6 @@ import axios from "axios";
 
 function Welcome() {
     const [password, setPassword] = useState('');
-    const [messageApi, contextHolder] = message.useMessage();
     const navigate = useNavigate();
 
     const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -32,10 +31,7 @@ function Welcome() {
                 setCookie('token', res.data?.token);
                 navigate('/');
             } else {
-                messageApi.open({
-                    type: 'error',
-                    content: '请求错误',
-                });
+                message.error("请求错误");
             }
         }).catch(err => {
             console.warn(err);
