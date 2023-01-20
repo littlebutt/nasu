@@ -32,7 +32,10 @@ const Files: React.FC<IFiles> = (props) => {
     const [filename, setFilename] = useState("");
     const [extension, setExtension] = useState("");
     const [labels, setLabels] = useState("");
-    const [tags, setTags] = useState("")
+    const [tags, setTags] = useState("");
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
+
     const tagOptions = [
         {
             param: 0,
@@ -56,6 +59,14 @@ const Files: React.FC<IFiles> = (props) => {
             label: "紫"
         }
     ];
+    const toParam = (value: string) => {
+        for (let tagOption of tagOptions) {
+            if (tagOption.value === value) {
+                return tagOption.param;
+            }
+        }
+        return '';
+    }
     const tableColumns: ColumnsType<FileDetail> = [
         {
             title: "文件名",
@@ -134,8 +145,13 @@ const Files: React.FC<IFiles> = (props) => {
         setLabels(v.join(':'));
     }
 
-    const handleChangeTags = (v: any, event: any) => {
-        setTags(v.join(':'));
+    const handleChangeTags = (v: string[], event: any) => {
+        setTags(v.map(t => toParam(t)).join(':'));
+    }
+
+    const handleChangeDate = (d: any, s: string[]) => {
+        setStartTime(s[0] ? s[0] + " 00:00:00" : "");
+        setEndTime(s[1] ? s[1] + " 23:59:59" : "");
     }
 
     const handleOverallExtensionInfo = () => Axios({
@@ -192,7 +208,6 @@ const Files: React.FC<IFiles> = (props) => {
         }
     }).then(res => {
         if (res.status === 200) {
-            console.log(res.data)
             setData(res.data?.nasuFiles.map((f: { Filename: any; Extension: any; Labels: string; Tags: string; UploadTime: any; Size: any; }) => {
                 return {
                     filename: f.Filename,
@@ -234,7 +249,7 @@ const Files: React.FC<IFiles> = (props) => {
                         <Col span={8}>
                             <Space direction='horizontal'>
                                 <label>上传日期：</label>
-                                <DatePicker.RangePicker />
+                                <DatePicker.RangePicker onChange={handleChangeDate}/>
                             </Space>
 
                         </Col>
@@ -266,7 +281,9 @@ const Files: React.FC<IFiles> = (props) => {
                             </Space>
                         </Col>
                         <Col span={5}>
-                            <Button type='default' icon={<SearchOutlined />} style={{float: 'right'}}>查询</Button>
+                            <Button type='default' icon={<SearchOutlined />} style={{float: 'right'}} onClick={() => handleListFilesByCondition({
+                                filename: filename, endTime: endTime, extension: extension, labels: labels, startTime: startTime, tags: tags
+                            })}>查询</Button>
                         </Col>
                         <Col span={2} style={{marginLeft: '25px'}}>
                             <Button type='primary' icon={<FileAddTwoTone />}>上传</Button>
