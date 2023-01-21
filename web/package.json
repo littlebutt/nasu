@@ -23,7 +23,6 @@
     "react-scripts": "5.0.1",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
-    "typescript": "^4.9.4",
     "typescript-cookie": "^1.0.4",
     "web-vitals": "^2.1.4"
   },
@@ -52,6 +51,14 @@
     ]
   },
   "devDependencies": {
-    "@types/js-md5": "^0.7.0"
+    "@types/js-md5": "^0.7.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "eslint": "^8.32.0",
+    "eslint-config-standard-with-typescript": "^31.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.32.1",
+    "typescript": "^4.9.4"
   }
 }

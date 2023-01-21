@@ -1,39 +1,41 @@
-import React, {useEffect} from 'react';
-import {Button, Empty, List, Skeleton} from "antd";
+import React from 'react'
+import { Button, Empty, List, Skeleton } from 'antd'
 
-type FileInfo = {
-    id: number,
-    filename: string,
-    labels: string,
-    uploadTime: string
+interface FileInfo {
+  id: number
+  filename: string
+  labels: string
+  uploadTime: string
 }
 
 interface IListCard {
-    title: string,
-    files: FileInfo[],
-    loadMore: () => void,
-    loading: boolean
+  title: string
+  files: FileInfo[]
+  loadMore: () => void
+  loading: boolean
 }
 
 const ListCard: React.FC<IListCard> = (props) => {
-
-    const onLoadMore =
-        !props.loading ? (
+  const onLoadMore =
+        !props.loading
+          ? (
             <div style={{
-                textAlign: 'center',
-                marginTop: 12,
-                height: 32,
-                lineHeight: '32px',
+              textAlign: 'center',
+              marginTop: 12,
+              height: 32,
+              lineHeight: '32px'
             }}>
                 <Button onClick={props.loadMore}>加载更多</Button>
             </div>
-        ) : null
+            )
+          : null
 
-    return (
-        <div style={{height: '250px', width: '500px'}}>
+  return (
+        <div style={{ height: '250px', width: '500px' }}>
             <h2>{props.title}</h2>
-            {props.files.length === 0 ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> :
-                <List
+            {props.files.length === 0
+              ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              : <List
                     itemLayout='horizontal'
                     loadMore={onLoadMore}
                     dataSource={props.files}
@@ -52,11 +54,8 @@ const ListCard: React.FC<IListCard> = (props) => {
                 />
             }
         </div>
-    )
+  )
 }
 
-
-
-
-export default ListCard;
-export type {FileInfo};
+export default ListCard
+export type { FileInfo }
