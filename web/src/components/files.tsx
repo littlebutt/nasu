@@ -105,12 +105,15 @@ const Files: React.FC<IFiles> = (props) => {
   ]
 
   const handleDeleteFile = async (filename: string) => {
+    const data = new URLSearchParams()
+    data.append('filename', filename)
     await Axios({
       method: 'POST',
       url: '/api/deleteFile',
-      params: {
-        filename
-      }
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: data
     }).then(res => {
       if (res.status === 200) {
         message.success('删除成功')
@@ -118,6 +121,7 @@ const Files: React.FC<IFiles> = (props) => {
     }).catch(err => {
       console.warn(err)
     })
+    handleListFilesByCondition()
   }
 
   const handleChangeFilename = (e: { target: { value: React.SetStateAction<string> } }) => {

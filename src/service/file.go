@@ -183,31 +183,32 @@ func ModifyFile(nasuFile db.NasuFile) bool {
 	return res
 }
 
-func DeleteFile(filename string) bool {
+func DeleteFile(filename string) (result bool, reason string) {
 	// pre-check
 	if filename == "" {
-		return false
+		return false, "上传格式错误"
 	}
 	// delete file
 	nasuFiles := db.NasuFileRepo.QueryNasuFilesByCondition(filename, "", []string{}, []string{},
 		"", "", 10, 1)
 	if len(nasuFiles) == 0 {
-		return false
+		return false, "找不到对应文件"
 	}
-	location := nasuFiles[0].Location
-	err := os.Remove(location)
+	targetPath := filepath.Join(context.NasuContext.ResourcesDir, strings.Split(nasuFiles[0].Location, "upload")[1])
+	log.Log.Debug("targetPath: %s", targetPath)
+	err := os.Remove(targetPath)
 	if err != nil {
 		log.Log.Error("[Nasu-service] Fail to remove file, filename: %s, err: %s", filename, err.Error())
-		return false
+		return false, "删除遇到问题" + err.Error()
 	}
 
 	// delete nasu_file
 	res := db.NasuFileRepo.DeleteNasuFileByFilename(filename)
 	if !res {
-		return false
+		return false, "数据库删除错误"
 	}
 
 	//delete nasu_file
 	res = db.NasuMetaRepo.DeleteNasuMetaByMetaTypeAndMetaValue("FILENAME", filename)
-	return res
+	return res, ""
 }
