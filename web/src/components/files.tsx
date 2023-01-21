@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, DatePicker, Input, Row, Select, Space, Table, Tag } from 'antd'
+import { Button, Col, DatePicker, Input, message, Row, Select, Space, Table, Tag } from 'antd'
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import tagRender, { tagOptions, toParam } from './tagrender'
 import { ColumnsType } from 'antd/es/table'
@@ -7,12 +7,14 @@ import Axios from '../axios'
 import Uploaddrawer from './uploaddrawer'
 
 interface FileDetail {
+  id: number
   filename: string
   extension: string
   labels: string[]
   tags: string[]
   uploadTime: string
   size: string
+  location: string
 }
 
 interface IOption {
@@ -96,11 +98,27 @@ const Files: React.FC<IFiles> = (props) => {
                 <Space size='middle'>
                     <Button shape='circle' size='small' icon={<EyeOutlined />}/>
                     <Button shape='circle' size='small' icon={<EditOutlined />}/>
-                    <Button shape='circle' size='small' icon={<DeleteOutlined />}/>
+                    <Button shape='circle' size='small' icon={<DeleteOutlined />} onClick={async () => { await handleDeleteFile(record.filename) }}/>
                 </Space>
       )
     }
   ]
+
+  const handleDeleteFile = async (filename: string) => {
+    await Axios({
+      method: 'POST',
+      url: '/api/deleteFile',
+      params: {
+        filename
+      }
+    }).then(res => {
+      if (res.status === 200) {
+        message.success('删除成功')
+      }
+    }).catch(err => {
+      console.warn(err)
+    })
+  }
 
   const handleChangeFilename = (e: { target: { value: React.SetStateAction<string> } }) => {
     setFilename(e.target.value)
@@ -186,14 +204,16 @@ const Files: React.FC<IFiles> = (props) => {
       }
     }).then(res => {
       if (res.status === 200) {
-        setData(res.data?.nasuFiles.map((f: { Filename: any, Extension: any, Labels: string, Tags: string, UploadTime: any, Size: any }) => {
+        setData(res.data?.nasuFiles.map((f: { Id: any, Filename: any, Extension: any, Labels: string, Tags: string, UploadTime: any, Size: any, Location: any }) => {
           return {
+            id: f.Id,
             filename: f.Filename,
             extension: f.Extension,
             labels: f.Labels.split(','),
             tags: f.Tags.split(','),
             uploadTime: f.UploadTime.split('T')[0],
-            size: f.Size
+            size: f.Size,
+            location: f.Location
           }
         }))
       }
