@@ -4,7 +4,7 @@ import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import tagRender, { tagOptions, toParam } from './tagrender'
 import { ColumnsType } from 'antd/es/table'
 import Axios from '../axios'
-import Uploaddrawer from './uploaddrawer'
+import FileDrawer from './filedrawer'
 
 interface FileDetail {
   id: number
@@ -37,7 +37,9 @@ const Files: React.FC<IFiles> = (props) => {
   const [tags, setTags] = useState('')
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
-  const [showUpload, setShowUpload] = useState(false)
+  const [show, setShow] = useState(false)
+  const [isUpload, setIsUpload] = useState(true)
+  const [modifyFile, setModifyFile] = useState<FileDetail | void>()
   const tableColumns: ColumnsType<FileDetail> = [
     {
       title: '文件名',
@@ -96,8 +98,8 @@ const Files: React.FC<IFiles> = (props) => {
       dataIndex: 'operation',
       render: (_, record) => (
                 <Space size='middle'>
-                    <Button shape='circle' size='small' icon={<EyeOutlined />}/>
-                    <Button shape='circle' size='small' icon={<EditOutlined />}/>
+                    <Button shape='circle' size='small' icon={<EyeOutlined />} onClick={() => { window.location.href = Axios.defaults.baseURL + record.location }}/>
+                    <Button shape='circle' size='small' icon={<EditOutlined />} onClick={() => { handleClickModify(record) }}/>
                     <Button shape='circle' size='small' icon={<DeleteOutlined />} onClick={async () => { await handleDeleteFile(record.filename) }}/>
                 </Space>
       )
@@ -113,7 +115,7 @@ const Files: React.FC<IFiles> = (props) => {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      data: data
+      data
     }).then(res => {
       if (res.status === 200) {
         message.success('删除成功')
@@ -146,7 +148,14 @@ const Files: React.FC<IFiles> = (props) => {
   }
 
   const handleClickUpload = () => {
-    setShowUpload(true)
+    setShow(true)
+    setIsUpload(true)
+  }
+
+  const handleClickModify = (record: FileDetail) => {
+    setModifyFile(record)
+    setShow(true)
+    setIsUpload(false)
   }
 
   const handleOverallExtensionInfo = async () => {
@@ -299,7 +308,7 @@ const Files: React.FC<IFiles> = (props) => {
                             <Table columns={tableColumns} dataSource={data} style={{ width: '1190px' }}/>
                         </Col>
                     </Row>
-                    <Uploaddrawer show={showUpload} setShow={setShowUpload} labelOptions={labelOptions} refresh={handleListFilesByCondition}/>
+                    <FileDrawer show={show} setShow={setShow} labelOptions={labelOptions} refresh={handleListFilesByCondition} isUpload={isUpload} record={modifyFile}/>
                 </>
             }
         </div>

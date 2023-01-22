@@ -7,13 +7,15 @@ import { RcFile } from 'antd/es/upload'
 import moment from 'moment'
 
 interface IUploadDrawer {
+  isUpload: boolean
   show: boolean
   setShow: (b: boolean) => void
   labelOptions: any[]
   refresh: () => void
+  record: any
 }
 
-const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
+const FileDrawer: React.FC<IUploadDrawer> = (props) => {
   const [form] = Form.useForm()
   const innerLabelOptions = props.labelOptions
   const [fileList, setFileList] = useState<UploadFile[]>([])
@@ -42,7 +44,6 @@ const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
       data,
       timeout: 600000
     }).then(res => {
-      console.log(res)
       if (res.status === 200 && res.data?.success === true) {
         message.success('上传成功')
       } else {
@@ -54,6 +55,31 @@ const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
       setUploading(false)
       props.setShow(false)
       props.refresh()
+      setFilename('')
+      setTags('')
+      setLabels('')
+    })
+  }
+
+  const modify = async (data: FormData) => {
+    await Axios({
+      method: 'POST',
+      url: '/api/modifyFile',
+      data
+    }).then(res => {
+      if (res.status === 200 && res.data?.success === true) {
+        message.success('编辑成功')
+      } else {
+        message.error(res.data?.reason ?? '内部错误')
+      }
+    }).catch(err => {
+      console.warn(err)
+    }).finally(() => {
+      props.setShow(false)
+      props.refresh()
+      setFilename('')
+      setTags('')
+      setLabels('')
     })
   }
 
@@ -69,22 +95,31 @@ const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
     upload(data)
   }
 
+  const handleModify = () => {
+    const data = new FormData()
+    data.append('id', props.record?.id)
+    data.append('filename', filename !== '' ? filename : props.record?.filename ?? '')
+    data.append('labels', labels !== '' ? labels : props.record?.labels ?? '')
+    data.append('tags', tags !== '' ? tags : props.record?.tags ?? '')
+    modify(data)
+  }
+
   return (
         <Drawer
-            title="上传文件"
+            title={props.isUpload ? '上传文件' : '编辑文件'}
             width={720}
             open={props.show}
             onClose={() => { props.setShow(false) }}
             bodyStyle={{ paddingBottom: 80 }}
-            extra={
-            <Button type='primary' loading={uploading} onClick={handleUpload}>上传</Button>
-            }>
+            extra={props.isUpload
+              ? <Button type='primary' loading={uploading} onClick={handleUpload}>上传</Button>
+              : <Button type='primary' loading={uploading} onClick={handleModify}>确定</Button>}>
             <Form form={form} name="basic" autoComplete='off'>
                 <Form.Item
                     label="文件名"
                     name='filename'
-                    rules={[{ required: true, message: '请输入文件名' }]}>
-                    <Input onChange={handleChangeFilename}/>
+                    rules={[{ required: props.isUpload, message: '请输入文件名' }]}>
+                    <Input onChange={handleChangeFilename} placeholder={!props.isUpload ? props.record.filename : ''}/>
                 </Form.Item>
                 <Form.Item
                     label="标签"
@@ -105,7 +140,7 @@ const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
                             options={tagOptions}
                             onChange={handleChangeTags}
                     />
-                </Form.Item>
+                </Form.Item>{props.isUpload &&
                 <Form.Item
                     label="文件"
                     name='file'
@@ -120,17 +155,17 @@ const UploadDrawer: React.FC<IUploadDrawer> = (props) => {
                               setFileList([...fileList, file])
                               return false
                             }
-                    }
+                            }
                             fileList={fileList}
                             maxCount={1}
                     >
                         <Button icon={<UploadOutlined />}>选择文件</Button>
                     </Upload>
                 </Form.Item>
-
+            }
             </Form>
         </Drawer>
   )
 }
 
-export default UploadDrawer
+export default FileDrawer
