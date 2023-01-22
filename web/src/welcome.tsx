@@ -26,12 +26,12 @@ function Welcome (): any {
         }
       }
     ).then(res => {
-      if (res.status === 200) {
+      if (res.status === 200 && res.data?.success) {
         console.log(res.data?.token)
         setCookie('token', res.data?.token)
         navigate('/')
       } else {
-        message.error('请求错误')
+        message.error('登陆失败')
       }
     }).catch(err => {
       console.warn(err)

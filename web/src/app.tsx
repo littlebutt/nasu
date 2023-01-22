@@ -3,6 +3,7 @@ import SideBar from './components/sidebar'
 import { Col, ConfigProvider, Row } from 'antd'
 import Overview from './components/overview'
 import Files from './components/files'
+import Settings from './components/settings'
 
 function App (): any {
   const [active, setActive] = useState('overview')
@@ -21,6 +22,7 @@ function App (): any {
             <Col span={20}>
                 <Overview show={active === 'overview'}/>
                 <Files show={active === 'files'}/>
+                <Settings show={active === 'settings'}/>
             </Col>
         </Row>
     </ConfigProvider>
