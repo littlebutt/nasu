@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
 	"github.com/littlebutt/nasu/src/service"
 	"github.com/littlebutt/nasu/src/utils"
 	_ "github.com/mattn/go-sqlite3"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -20,6 +22,9 @@ import (
 const RESOURCES_PATH string = "./resources"
 const NASU_DB_PATH string = "./resources/nasu.db"
 const LOG_FILENAME string = "nasu.log"
+
+//go:embed web
+var webFiles embed.FS
 
 func InitLog(isDebug bool) {
 	logFile := path.Join(RESOURCES_PATH, LOG_FILENAME)
@@ -81,6 +86,10 @@ func InitRoute(isDebug bool) *gin.Engine {
 	router.MaxMultipartMemory = int64(maxFileSize) << 30 // 16GB
 	router.Use(gin.Recovery())
 	router.Use(middleware.LogRequired())
+	webFiles, err := fs.Sub(webFiles, "web")
+	if err != nil {
+		log.Log.Fatal("[nasu-init] Fail to build webFiles %s", err.Error())
+	}
 	if isDebug {
 		config := cors.DefaultConfig()
 		config.AllowAllOrigins = true
@@ -94,7 +103,7 @@ func InitRoute(isDebug bool) *gin.Engine {
 	authorized := router.Group("/api")
 	authorized.Use(middleware.AuthRequired())
 	routeAuth(authorized)
-	routeCommon(router)
+	routeCommon(router, webFiles)
 	log.Log.Debug("[Nasu-init] route has been inited!")
 	return router
 }
