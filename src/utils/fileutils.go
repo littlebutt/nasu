@@ -44,5 +44,5 @@ func TransformSizeToString(size *int64) string {
 func TransformFromPathToLocation(absPath string) string {
 	absPath = strings.Replace(absPath, "\\", "/", -1)
 	loactionSlice := strings.Split(absPath, "/")
-	return "/api/upload/" + strings.Join(loactionSlice[len(loactionSlice)-2:], "/")
+	return "/file/upload/" + strings.Join(loactionSlice[len(loactionSlice)-2:], "/")
 }

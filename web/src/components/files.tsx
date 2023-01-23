@@ -98,7 +98,7 @@ const Files: React.FC<IFiles> = (props) => {
       dataIndex: 'operation',
       render: (_, record) => (
                 <Space size='middle'>
-                    <Button shape='circle' size='small' icon={<EyeOutlined />} onClick={() => { window.location.href = Axios.defaults.baseURL + record.location }}/>
+                    <Button shape='circle' size='small' icon={<EyeOutlined />} onClick={() => { window.open(Axios.defaults.baseURL + record.location) }}/>
                     <Button shape='circle' size='small' icon={<EditOutlined />} onClick={() => { handleClickModify(record) }}/>
                     <Button shape='circle' size='small' icon={<DeleteOutlined />} onClick={async () => { await handleDeleteFile(record.filename) }}/>
                 </Space>

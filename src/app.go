@@ -87,6 +87,10 @@ func InitRoute(isDebug bool) *gin.Engine {
 		config.AllowHeaders = append(config.AllowHeaders, "Authorization")
 		router.Use(cors.New(config))
 	}
+	cookie := router.Group("/file")
+	cookie.Use(middleware.CookieRequired())
+	routeCookie(cookie)
+
 	authorized := router.Group("/api")
 	authorized.Use(middleware.AuthRequired())
 	routeAuth(authorized)

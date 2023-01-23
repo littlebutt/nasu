@@ -8,10 +8,14 @@ import (
 
 func routeCommon(engine *gin.Engine) {
 	engine.POST("/login", handler.HandleLogin)
+
+}
+
+func routeCookie(engine *gin.RouterGroup) {
+	engine.StaticFS("/upload", http.Dir("./resources"))
 }
 
 func routeAuth(engine *gin.RouterGroup) {
-	engine.StaticFS("/upload", http.Dir("./resources"))
 	engine.POST("/changePassword", handler.HandleChangePassword)
 	engine.GET("/overallFileInfo", handler.HandleOverallFileInfo)
 	engine.GET("/overallLabelInfo", handler.HandleOverallLabelInfo)
