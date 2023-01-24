@@ -2,7 +2,7 @@
   "name": "nasu-web",
   "version": "0.1.0",
   "private": true,
-  "homepage":".",
+  "homepage": ".",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -15,6 +15,7 @@
     "axios": "^1.2.2",
     "echarts": "^5.4.1",
     "echarts-for-react": "^3.0.2",
+    "history": "^5.3.0",
     "js-md5": "^0.7.3",
     "moment": "^2.29.4",
     "react": "^18.2.0",
@@ -32,7 +33,7 @@
     "build": "react-scripts build && mv build ..\\src\\web",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "clean": "rm ..\\src\\web"
+    "clean": "rmdir /s /q ..\\src\\web"
   },
   "eslintConfig": {
     "extends": [

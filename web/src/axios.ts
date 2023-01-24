@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { getCookie } from 'typescript-cookie'
+import { history } from './history'
 
 const Axios = axios.create({
-  // baseURL: 'http://localhost:8080',
+  baseURL: 'http://localhost:8080',
   timeout: 2000
 })
 
@@ -20,7 +21,7 @@ Axios.interceptors.response.use((res) => {
   return res
 }, async (error) => {
   if (error.request.status === 401) {
-    window.location.replace('/welcome')
+    history.push('/welcome')
   }
   return await Promise.reject(error)
 })
