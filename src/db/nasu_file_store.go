@@ -31,7 +31,7 @@ func NewNasuFileRepo(engine *xorm.Engine) NasuFileStore {
 func (db *nasuFileRepo) InsertNasuFile(nasuFile NasuFile) bool {
 	inserted, err := db.x.Insert(&nasuFile)
 	if err != nil {
-		log.Log.Warn("[Nasu-db] Fail to insert nasu_file, nasu_file: %s, err: %s",
+		log.Log.Warn("[Nasu-db] Fail to insert nasu_file, nasu_file: %v, err: %s",
 			nasuFile, err.Error())
 		return false
 	}
@@ -113,7 +113,7 @@ func (db *nasuFileRepo) QueryNasuFileById(id int64) *NasuFile {
 func (db *nasuFileRepo) UpdateNasuFile(nasuFile *NasuFile) bool {
 	_, err := db.x.Update(nasuFile, &NasuFile{Id: nasuFile.Id})
 	if err != nil {
-		log.Log.Warn("[Nasu-db] Fail to update nasu_file, nasu_file: %s, err: %s", nasuFile, err.Error())
+		log.Log.Warn("[Nasu-db] Fail to update nasu_file, nasu_file: %v, err: %s", nasuFile, err.Error())
 		return false
 	}
 	return true
@@ -122,7 +122,7 @@ func (db *nasuFileRepo) UpdateNasuFile(nasuFile *NasuFile) bool {
 func (db *nasuFileRepo) DeleteNasuFileByFilename(filename string) bool {
 	_, err := db.x.Where("filename = ?", filename).Delete(&NasuFile{})
 	if err != nil {
-		log.Log.Warn("[Nasu-db] Fail to delete nasu_file, filename: %d, err: %s", filename, err.Error())
+		log.Log.Warn("[Nasu-db] Fail to delete nasu_file, filename: %s, err: %s", filename, err.Error())
 		return false
 	}
 	return true
