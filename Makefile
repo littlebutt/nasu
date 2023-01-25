@@ -34,7 +34,7 @@ else
 	@echo "sqlite3 is installed"
 endif
 
-build: check-env
+build: check-env build-web
 	go build -o $(EXECUTABLE) github.com/littlebutt/nasu/src
 
 test:
@@ -42,4 +42,7 @@ test:
 
 run: check-env
 	go run github.com/littlebutt/nasu/src
+
+build-web:
+	cd web && make build
 
