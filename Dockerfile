@@ -13,4 +13,4 @@ COPY . ${GOPATH}/src/github.com/littlebutt
 WORKDIR ${GOPATH}/src/github.com/littlebutt
 
 RUN mkdir "resources"
-RUN go build github.com/littlebutt/nasu/src
+RUN go build -o nasu github.com/littlebutt/nasu/src
